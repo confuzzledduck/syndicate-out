@@ -70,7 +70,7 @@
 						<td>
 							<select id="triggermethod-<?php echo $groupKey; ?>" name="so_options[group][<?php echo $groupKey ?>][syndicate_category]">
 								<option value="none"<?php echo ( 'none' == $syndicationGroup['syndicate_category'] ) ? ' selected="selected"' : ''; ?>>No categories</option>
-								<option value="all"<?php echo ( 'all' == $syndicationGroup['syndicate_category'] ) ? ' selected="selected"' : ''; ?>>All categories</option>
+								<option value="all"<?php echo ( 'all' == $syndicationGroup['syndicate_category'] ) ? ' selected="selected"' : ''; ?>>All post categories</option>
 								<option value="syndication"<?php echo ( 'syndication' == $syndicationGroup['syndicate_category'] ) ? ' selected="selected"' : ''; ?>>Syndication category only</option>
 							</select>
 						</td>
