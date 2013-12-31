@@ -227,7 +227,7 @@ if ( is_admin() ) {
 						$activeGroups[$syndicationGroupKey] = $syndicationGroup;
 					}
 				}
-				
+
 				if ( count( $activeGroups ) > 0 ) {
 					if ( @include_once(  ABSPATH . WPINC . '/class-IXR.php' ) ) {
 						if ( @include_once(  ABSPATH . WPINC . '/class-wp-http-ixr-client.php' ) ) {
@@ -277,7 +277,7 @@ if ( is_admin() ) {
 										$remotePost['terms_names']['post_tag'][] = $postTag->name;
 									}
 								}
-						
+
 	 // Categories...
 								$groupCategoryArray = array();
 								foreach ( $activeGroups AS $groupKey => $groupDetails ) {
@@ -285,15 +285,18 @@ if ( is_admin() ) {
 										if ( 'syndication' == $groupDetails['syndicate_category'] && ( -1 != $syndicationGroup['category'] ) ) {
 											$groupCategoryArray[$groupKey]['category'] = array( get_cat_name( $groupDetails['category'] ) );
 										} else if ( ( 'all' == $groupDetails['syndicate_category'] ) || ( -1 == $syndicationGroup['category'] ) ) {
-											$categories = get_the_category( $postId );
+											$categories = $_POST['post_category'];
 											$groupCategoryArray[$groupKey] = array();
 											foreach ( $categories AS $postCategory ) {
-												$groupCategoryArray[$groupKey][] = $postCategory->cat_name;
+												if ( 0 != $postCategory ) {
+													$groupCategoryArray[$groupKey][] = get_cat_name( $postCategory );
+												}
 											}
 										}
 									}
+
 								}
-						
+
 	 // Publish the post to the remote blog(s)...
 								if ( false !== ( $remotePostIds = unserialize( get_post_meta( $postMetaId, '_so_remote_posts', true ) ) ) ) {
 									if ( ! isset( $remotePostIds['options_version'] ) ) {
@@ -351,20 +354,8 @@ if ( is_admin() ) {
 	 // specified, and if not strip out anything which might cause problems...
 	function syndicate_out_clean_for_remote( $remoteAddress, $remoteUsername, $remotePassword, $compiledGroupPost ) {
 
-	  if ( is_array( $compiledGroupPost['terms_names'] ) ) {
-			$xmlrpc = new WP_HTTP_IXR_CLIENT( $remoteAddress.'xmlrpc.php' );
-			$xmlrpc->query( 'wp.getTaxonomies', array( 0, $remoteUsername, $remotePassword ) );
-			$remoteTaxonomies = $xmlrpc->getResponse();
-
-			if ( is_array( $remoteTaxonomies ) ) {
-			  $validTaxonomies = array();
-				foreach ( $remoteTaxonomies AS $remoteTaxonomy ) {
-				  if ( array_key_exists( $remoteTaxonomy['name'], $compiledGroupPost['terms_names'] ) ) {
-						$validTaxonomies[$remoteTaxonomy['name']] = $compiledGroupPost['terms_names'][$remoteTaxonomy['name']];
-					}
-				}
-				$compiledGroupPost['terms_names'] = $validTaxonomies;
-			}
+		if ( 'revision' == $compiledGroupPost['post_type'] ) {
+			$compiledGroupPost['post_type'] = 'post';
 		}
 
 		return $compiledGroupPost;
