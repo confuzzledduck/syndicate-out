@@ -4,7 +4,7 @@
 
 	Plugin Name: Syndicate Out
 	Plugin URI: http://www.flutt.co.uk/development/wordpress-plugins/syndicate-out/
-	Version: 0.8.1
+	Version: 0.8.2.1
 	Description: Syndicates posts made in any specified category to another WP blog using WordPress' built in XML-RPC functionality.
 	Author: ConfuzzledDuck
 	Author URI: http://www.flutt.co.uk/
