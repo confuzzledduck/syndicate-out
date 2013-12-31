@@ -11,14 +11,15 @@ Syndicates posts made in any specified category to another WP blog using WordPre
 
 Syndicate Out syndicates all posts made in a specified category (or optionally all posts) to any other WordPress
 blog(s) in real time. This enables blog owners to create automatic aggregating, or topic specific blogs from any
-number of different blog sources without relying on RSS feeds or any kind of timed events.
+number of different blog sources without relying on RSS feeds or any kind of timed events. Put simply: it re-posts
+the content of one blog to one or more other blogs.
 
 The plugin uses WordPress' built in XML-RPC functionality to push posts to the target blog. XML-RPC will need
 to be enabled on the receiving blog in order for this plugin to work. For versions of WordPress 3.5 and later
 the XML-RPC is enabled by default. For versions prior to 3.5 it will need enabling in the admin panel.
 
-As of version 0.8 of the plugin the sending blog needs to be WordPress 3.1 or higher due to the use of the
-WordPress enhanced IXR client and the receiving blog needs to be WordPress 3.4 or higher so that the XML-RPC
+For versions 0.8 and higher of the plugin the sending blog needs to be WordPress 3.1 or higher due to the use of
+the WordPress enhanced IXR client, and the receiving blog needs to be WordPress 3.4 or higher so that the XML-RPC
 WordPress API posts functionality is available.
 
 More information is available, feature requests and bug reports are gladly accepted over on the
@@ -37,8 +38,11 @@ The post should immediately be cross-posted to the remote blog.
 
 == Changelog ==
 
-= 0.8.0.1 =
-* Bug fix to address an issues seen by lots of people in 0.8: failure to syndicate with the API resposne "Sorry, one of the given taxonomies is not supported by the post type".
+= 0.8.2 =
+* Finalized bug fix to address taxonomy issue in 0.8 (thanks to everyone who reported and assisted squashing this one!).
+
+= 0.8.1 =
+* Experimenal bug fix to address an issues seen by lots of people in 0.8: failure to syndicate with the API resposne "Sorry, one of the given taxonomies is not supported by the post type".
 
 = 0.8 =
 
