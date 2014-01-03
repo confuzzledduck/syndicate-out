@@ -4,7 +4,7 @@
 
 	Plugin Name: Syndicate Out
 	Plugin URI: http://www.flutt.co.uk/development/wordpress-plugins/syndicate-out/
-	Version: 0.8.2.1
+	Version: 0.8.2.2
 	Description: Syndicates posts made in any specified category to another WP blog using WordPress' built in XML-RPC functionality.
 	Author: ConfuzzledDuck
 	Author URI: http://www.flutt.co.uk/
@@ -15,7 +15,7 @@
 #  syndicate-out.php
 #
 #  Created by Jonathon Wardman on 09-07-2009.
-#  Copyright 2009 - 2013, Jonathon Wardman. All rights reserved.
+#  Copyright 2009 - 2014, Jonathon Wardman. All rights reserved.
 #
 #  This program is free software: you can redistribute it and/or modify
 #  it under the terms of the GNU General Public License as published by
@@ -222,8 +222,15 @@ if ( is_admin() ) {
 		if ( $soOptions = get_option( 'so_options' ) ) {
 			if ( isset( $soOptions['group'] ) && is_array( $soOptions['group'] ) ) {
 			
+				$activeGroups = array();
 				foreach ( $soOptions['group'] AS $syndicationGroupKey => $syndicationGroup ) {
-					if ( ( -1 == $syndicationGroup['category'] ) || in_category( $syndicationGroup['category'], $postId ) ) {
+					$categories = get_the_category( $postId );
+					if ( 0 == count( $categories )) {
+						if ( null != $_POST['post_category']) {
+							$categories = $_POST['post_category'];
+						}
+					}
+					if ( ( -1 == $syndicationGroup['category'] ) || in_array( $syndicationGroup['category'], $categories ) ) {
 						$activeGroups[$syndicationGroupKey] = $syndicationGroup;
 					}
 				}
@@ -283,7 +290,7 @@ if ( is_admin() ) {
 								foreach ( $activeGroups AS $groupKey => $groupDetails ) {
 									if ( 'none' != $groupDetails['syndicate_category'] ) {
 										if ( 'syndication' == $groupDetails['syndicate_category'] && ( -1 != $syndicationGroup['category'] ) ) {
-											$groupCategoryArray[$groupKey]['category'] = array( get_cat_name( $groupDetails['category'] ) );
+											$groupCategoryArray[$groupKey] = array( get_cat_name( $groupDetails['category'] ) );
 										} else if ( ( 'all' == $groupDetails['syndicate_category'] ) || ( -1 == $syndicationGroup['category'] ) ) {
 											$categories = $_POST['post_category'];
 											$groupCategoryArray[$groupKey] = array();
@@ -354,7 +361,7 @@ if ( is_admin() ) {
 	 // specified, and if not strip out anything which might cause problems...
 	function syndicate_out_clean_for_remote( $remoteAddress, $remoteUsername, $remotePassword, $compiledGroupPost ) {
 
-		if ( 'revision' == $compiledGroupPost['post_type'] ) {
+		if ( ( 'revision' == $compiledGroupPost['post_type'] ) || ( 'inherit' == $compiledGroupPost['post_type'] ) ) {
 			$compiledGroupPost['post_type'] = 'post';
 		}
 
