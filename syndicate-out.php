@@ -245,6 +245,7 @@ if ( is_admin() ) {
 							
 								if ( 'inherit' == $postData->post_status ) {
 									$postMetaId = $postData->post_parent;
+									$postData->post_status = get_post_status( $postMetaId );
 								} else {
 									$postMetaId = $postId;
 								}
@@ -361,7 +362,7 @@ if ( is_admin() ) {
 	 // specified, and if not strip out anything which might cause problems...
 	function syndicate_out_clean_for_remote( $remoteAddress, $remoteUsername, $remotePassword, $compiledGroupPost ) {
 
-		if ( ( 'revision' == $compiledGroupPost['post_type'] ) || ( 'inherit' == $compiledGroupPost['post_type'] ) ) {
+		if ( ( 'revision' == $compiledGroupPost['post_type'] ) ) {
 			$compiledGroupPost['post_type'] = 'post';
 		}
 
