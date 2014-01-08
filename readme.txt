@@ -38,6 +38,11 @@ The post should immediately be cross-posted to the remote blog.
 
 == Changelog ==
 
+= 0.8.2.2 =
+* Fixed a bug relating to post categories being transmitted as Array sometimes. (Thanks ammonlee.)
+* Bugfix relating to post status (inherit vs. post).
+* Minor change to fix issue seen when posting to multiple blogs in one category. (Thanks mkokes and Free Refill.)
+
 = 0.8.2.1 =
 * Version bump.
 

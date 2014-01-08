@@ -323,7 +323,7 @@ if ( is_admin() ) {
 										foreach ( $remoteServers AS $serverKey => $remotePostId ) {
 											if ( is_numeric( $remotePostId ) ) {
 												if ( isset( $soOptions['group'][$groupKey]['servers'][$serverKey] ) ) {
-													$thisServerPost = $compiledGroupPost['terms_names'] = syndicate_out_clean_for_remote( $soOptions['group'][$groupKey]['servers'][$serverKey]['server'], $soOptions['group'][$groupKey]['servers'][$serverKey]['username'], $soOptions['group'][$groupKey]['servers'][$serverKey]['password'], $compiledGroupPost );
+													$thisServerPost = syndicate_out_clean_for_remote( $soOptions['group'][$groupKey]['servers'][$serverKey]['server'], $soOptions['group'][$groupKey]['servers'][$serverKey]['username'], $soOptions['group'][$groupKey]['servers'][$serverKey]['password'], $compiledGroupPost );
 													$xmlrpc = new WP_HTTP_IXR_CLIENT( $soOptions['group'][$groupKey]['servers'][$serverKey]['server'].'xmlrpc.php' );
 													$xmlrpc->query( 'wp.editPost', array( 0, $soOptions['group'][$groupKey]['servers'][$serverKey]['username'], $soOptions['group'][$groupKey]['servers'][$serverKey]['password'], $remotePostId, $thisServerPost ) );
 												}
@@ -338,7 +338,7 @@ if ( is_admin() ) {
 											$compiledGroupPost['terms_names']['category'] = $groupCategoryArray[$groupKey];
 										}
 										foreach ( $activeGroup['servers'] AS $serverKey => $serverDetails ) {
-											$thisServerPost = $compiledGroupPost['terms_names'] = syndicate_out_clean_for_remote( $soOptions['group'][$groupKey]['servers'][$serverKey]['server'], $soOptions['group'][$groupKey]['servers'][$serverKey]['username'], $soOptions['group'][$groupKey]['servers'][$serverKey]['password'], $compiledGroupPost );
+											$thisServerPost = syndicate_out_clean_for_remote( $soOptions['group'][$groupKey]['servers'][$serverKey]['server'], $soOptions['group'][$groupKey]['servers'][$serverKey]['username'], $soOptions['group'][$groupKey]['servers'][$serverKey]['password'], $compiledGroupPost );
 											$xmlrpc = new WP_HTTP_IXR_CLIENT( $serverDetails['server'].'xmlrpc.php' );
 											$xmlrpc->query( 'wp.newPost', array( 0, $serverDetails['username'], $serverDetails['password'], $thisServerPost ) );
 											$remotePostInformation['group'][$groupKey][$serverKey] = $xmlrpc->getResponse();
