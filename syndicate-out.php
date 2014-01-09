@@ -173,9 +173,9 @@ if ( is_admin() ) {
 											$newOptions['group'][$groupId]['servers'][$serverKey]['authenticated'] = false;
 											$newOptions['group'][$groupId]['servers'][$serverKey]['api'] = 'Unknown';
 										} else {
-										  $newOptions['group'][$groupId]['servers'][$serverKey]['authenticated'] = true;
+											$newOptions['group'][$groupId]['servers'][$serverKey]['authenticated'] = true;
 											if ( isset( $xmlrpcResponse['so_api'] ) ) {
-											  $newOptions['group'][$groupId]['servers'][$serverKey]['api'] = 'Syndicate Out API v'.$xmlrpcResponse['so_api']['value'];
+												$newOptions['group'][$groupId]['servers'][$serverKey]['api'] = 'Syndicate Out API v'.$xmlrpcResponse['so_api']['value'];
 											} else {
 												$newOptions['group'][$groupId]['servers'][$serverKey]['api'] = $xmlrpcResponse['software_name']['value'].' '.$xmlrpcResponse['software_version']['value'];
 											}
@@ -225,8 +225,8 @@ if ( is_admin() ) {
 				$activeGroups = array();
 				foreach ( $soOptions['group'] AS $syndicationGroupKey => $syndicationGroup ) {
 					$categories = get_the_category( $postId );
-					if ( 0 == count( $categories )) {
-						if ( null != $_POST['post_category']) {
+					if ( 0 == count( $categories ) ) {
+						if ( null != $_POST['post_category'] ) {
 							$categories = $_POST['post_category'];
 						}
 					}
@@ -258,7 +258,7 @@ if ( is_admin() ) {
 								$remotePost = array();
 								foreach ( $postData AS $dataItemKey => $dataItemContent ) {
 									if ( in_array( $dataItemKey, $syndicateElements ) ) {
-									  $remotePost[$dataItemKey] = $dataItemContent;
+										$remotePost[$dataItemKey] = $dataItemContent;
 									}
 								}
 								if ( isset( $remotePost['post_date_gmt'] ) ) {
@@ -404,15 +404,15 @@ if ( is_admin() ) {
 				unset( $newSettings['options_version'] );
 				$newSettings['group'][0] = $newSettings;
 			case 2: # Upgrades from version 2 to version 3; adds authenticated and api
-			  if ( isset( $newSettings['group'] ) && is_array( $newSettings['group'] ) ) {
+				if ( isset( $newSettings['group'] ) && is_array( $newSettings['group'] ) ) {
 					foreach ( $newSettings['group'] AS $groupId => $groupArray ) {
 						if ( isset( $groupArray['servers'] ) && is_array( $groupArray['servers'] ) ) {
-						  foreach ( $groupArray['servers'] AS $serverId => $serverDetails ) {
+							foreach ( $groupArray['servers'] AS $serverId => $serverDetails ) {
 								if ( ! isset( $serverDetails['authenticated'] ) ) {
-								  $newSettings['group'][$groupId]['servers'][$serverId]['authenticated'] = null;
+									$newSettings['group'][$groupId]['servers'][$serverId]['authenticated'] = null;
 								}
 								if ( ! isset( $serverDetails['api'] ) ) {
-								  $newSettings['group'][$groupId]['servers'][$serverId]['api'] = null;
+									$newSettings['group'][$groupId]['servers'][$serverId]['api'] = null;
 								}
 							}
 						}
