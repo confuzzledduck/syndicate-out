@@ -38,6 +38,9 @@ The post should immediately be cross-posted to the remote blog.
 
 == Changelog ==
 
+= 0.8.3 =
+* Efficiency improvements in syndication routine.
+
 = 0.8.2.2 =
 * Fixed a bug relating to post categories being transmitted as Array sometimes. (Thanks ammonlee.)
 * Bugfix relating to post status (inherit vs. post).
