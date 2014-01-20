@@ -5,6 +5,8 @@
 	Plugin Name: Syndicate Out
 	Plugin URI: http://www.flutt.co.uk/development/wordpress-plugins/syndicate-out/
 	Version: 0.8.3
+	Text Domain: syndicate-out
+	Domain Path: /lang
 	Description: Syndicates posts made in any specified category to another WP blog using WordPress' built in XML-RPC functionality.
 	Author: ConfuzzledDuck
 	Author URI: http://www.flutt.co.uk/
@@ -41,6 +43,7 @@ if ( is_admin() ) {
 	define( 'SO_OPTIONS_VERSION', 3 );
 
 	 // Register functions...
+	add_action( 'plugins_loaded', 'syndicate_out_init' );
 	add_action( 'admin_menu', 'syndicate_out_menu' );
 	add_action( 'admin_init', 'syndicate_out_register_settings' );
 	add_action( 'save_post', 'syndicate_out_post' );
@@ -51,6 +54,13 @@ if ( is_admin() ) {
 	//register_uninstall_hook( __FILE__, 'syndicate_out_delete' );
 	
  /* Admin section. */
+ 
+	 // Plugin initialisation...
+	function syndicate_out_init() {
+
+		load_plugin_textdomain( 'syndicate-out', false, dirname( plugin_basename( __FILE__ ) ).'/lang/' );
+	
+	}
 
 	 // Admin menu...
 	function syndicate_out_menu() {
@@ -63,7 +73,7 @@ if ( is_admin() ) {
 	function syndicate_out_settings_link($links, $file) {
 
 		if ( plugin_basename( __FILE__ ) == $file ) {
-			array_push( $links, '<a href="options-general.php?page=syndicate_out">Settings</a>' );
+			array_push( $links, '<a href="options-general.php?page=syndicate_out">'.__( 'Settings', 'syndicate-out' ).'</a>' );
 		}
 		return $links;
 
@@ -171,11 +181,11 @@ if ( is_admin() ) {
 										$xmlrpcResponse = $xmlrpc->getResponse();
 										if ( '403' == $xmlrpcResponse['faultCode'] ) {
 											$newOptions['group'][$groupId]['servers'][$serverKey]['authenticated'] = false;
-											$newOptions['group'][$groupId]['servers'][$serverKey]['api'] = 'Unknown';
+											$newOptions['group'][$groupId]['servers'][$serverKey]['api'] = __( 'Unknown', 'syndicate-out' );
 										} else {
 											$newOptions['group'][$groupId]['servers'][$serverKey]['authenticated'] = true;
 											if ( isset( $xmlrpcResponse['so_api'] ) ) {
-												$newOptions['group'][$groupId]['servers'][$serverKey]['api'] = 'Syndicate Out API v'.$xmlrpcResponse['so_api']['value'];
+												$newOptions['group'][$groupId]['servers'][$serverKey]['api'] = sprintf( __( 'Syndicate Out API v%s', 'syndicate-out' ), $xmlrpcResponse['so_api']['value'] );
 											} else {
 												$newOptions['group'][$groupId]['servers'][$serverKey]['api'] = $xmlrpcResponse['software_name']['value'].' '.$xmlrpcResponse['software_version']['value'];
 											}
