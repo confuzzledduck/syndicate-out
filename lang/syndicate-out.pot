@@ -1,0 +1,170 @@
+# Copyright (C) 2014 Syndicate Out
+# This file is distributed under the same license as the Syndicate Out package.
+msgid ""
+msgstr ""
+"Project-Id-Version: Syndicate Out 0.8.3\n"
+"Report-Msgid-Bugs-To: http://wordpress.org/tag/syndicate-out\n"
+"POT-Creation-Date: 2014-01-20 20:07:08+00:00\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"PO-Revision-Date: 2014-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+
+#: so-options.php:30
+msgid ""
+"Each category may be syndicated to as many blogs as required, and a remote "
+"blog may appear in as many groups as needed."
+msgstr ""
+
+#: so-options.php:31
+msgid ""
+"Posts which match multiple groups with duplicate servers will only be "
+"syndicated to the remote blog once but will use the least restrictive "
+"'transmit categories' setting."
+msgstr ""
+
+#: so-options.php:32
+msgid "There is no limit to the number of groups which may be added."
+msgstr ""
+
+#: so-options.php:49
+msgid "Syndication Group %s"
+msgstr ""
+
+#: so-options.php:54
+msgid "Syndicate"
+msgstr ""
+
+#: so-options.php:57
+msgid "Disabled"
+msgstr ""
+
+#: so-options.php:58
+msgid "All posts"
+msgstr ""
+
+#: so-options.php:59
+msgid "Selected category"
+msgstr ""
+
+#: so-options.php:60
+msgid "Selected posts"
+msgstr ""
+
+#: so-options.php:63
+msgid "Select category"
+msgstr ""
+
+#: so-options.php:73
+msgid "Transmit categories"
+msgstr ""
+
+#: so-options.php:76
+msgid "No categories"
+msgstr ""
+
+#: so-options.php:77
+msgid "All post categories"
+msgstr ""
+
+#: so-options.php:78
+msgid "Syndication category only"
+msgstr ""
+
+#: so-options.php:90
+msgid "Address"
+msgstr ""
+
+#: so-options.php:91
+msgid "Username"
+msgstr ""
+
+#: so-options.php:92
+msgid "Password"
+msgstr ""
+
+#: so-options.php:93
+msgid "Status"
+msgstr ""
+
+#: so-options.php:115
+msgid "Authentication"
+msgstr ""
+
+#: so-options.php:115
+msgid "OK"
+msgstr ""
+
+#: so-options.php:115 so-options.php:116
+msgid "unknown"
+msgstr ""
+
+#: so-options.php:115
+msgid "failed"
+msgstr ""
+
+#: so-options.php:116
+msgid "Remote API"
+msgstr ""
+
+#: so-options.php:126
+msgid "Add %s new server(s) into group"
+msgstr ""
+
+#: so-options.php:127
+msgid "Go"
+msgstr ""
+
+#: so-options.php:130
+msgid "Delete group"
+msgstr ""
+
+#: so-options.php:134
+msgid "1 server"
+msgid_plural "%s servers"
+msgstr[0] ""
+msgstr[1] ""
+
+#: so-options.php:145
+msgid "Add %s new groups"
+msgstr ""
+
+#: so-options.php:147
+msgid "Save settings"
+msgstr ""
+
+#: syndicate-out.php:76
+msgid "Settings"
+msgstr ""
+
+#: syndicate-out.php:184
+msgid "Unknown"
+msgstr ""
+
+#: syndicate-out.php:188
+msgid "Syndicate Out API v%s"
+msgstr ""
+
+#. Plugin Name of the plugin/theme
+msgid "Syndicate Out"
+msgstr ""
+
+#. Plugin URI of the plugin/theme
+msgid "http://www.flutt.co.uk/development/wordpress-plugins/syndicate-out/"
+msgstr ""
+
+#. Description of the plugin/theme
+msgid ""
+"Syndicates posts made in any specified category to another WP blog using "
+"WordPress' built in XML-RPC functionality."
+msgstr ""
+
+#. Author of the plugin/theme
+msgid "ConfuzzledDuck"
+msgstr ""
+
+#. Author URI of the plugin/theme
+msgid "http://www.flutt.co.uk/"
+msgstr ""
