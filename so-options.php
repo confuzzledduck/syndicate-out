@@ -130,7 +130,9 @@
 					<input type="submit" name="so_options[group][<?php echo $groupKey; ?>][deletegroup]" value="<?php _e( 'Delete group', 'syndicate-out' ); ?>" class="button delete" />
 				</div>
 				<div class="tablenav-pages one-page">
-					<span class="displaying-num"><?php echo count( $syndicationGroup['servers'] ) ; ?> <?php echo ( count( $syndicationGroup['servers'] ) == 1 ) ? 'server' : 'servers'; ?></span>
+					<span class="displaying-num">
+						<?php printf( _n( '1 server', '%s servers', count( $syndicationGroup['servers'] ), 'syndicate-out' ), number_format_i18n( count( $syndicationGroup['servers'] ) ) ); ?>
+					</span>
 				</div>
 			</div>
 			
