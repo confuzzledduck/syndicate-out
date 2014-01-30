@@ -46,7 +46,7 @@
 			}
 ?>
 		<div style="padding-bottom: 15px;">
-			<h3><?php printf( __( 'Syndication Group %s', 'syndicate-out' ), ($groupKey + 1) ); ?></h3>
+			<h3><?php printf( __( 'Syndication Group %s', 'syndicate-out' ), number_format_i18n( ( $groupKey + 1 ) ) ); ?></h3>
 			
 			<table class="form-table">
 				<tbody>
