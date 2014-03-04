@@ -163,7 +163,7 @@ if ( is_admin() ) {
 							if ( ! empty( $serverDetails['server'] ) ) {
 							
 								$remoteServer = trim( $serverDetails['server'] );
-								if ( 'http://' != substr( $remoteServer, 0, 7 ) ) {
+								if ( ('http://' != substr( $remoteServer, 0, 7 )) && ('https://' != substr( $remoteServer, 0, 8 )) ) {
 									$remoteServer = 'http://'.$remoteServer;
 								}
 								if ( '/' != substr( $remoteServer, -1 ) ) {
