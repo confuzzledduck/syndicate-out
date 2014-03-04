@@ -42,6 +42,7 @@ The post should immediately be cross-posted to the remote blog.
 * Efficiency improvements in syndication routine.
 * Fully internationalized the plugin.
 * Added Spanish translation. (Muchas gracias Andrew, Jelena and WebHostingHub.)
+* Prevented trampling on https-based URLs. (Multumesc Marius.)
 
 = 0.8.2.2 =
 * Fixed a bug relating to post categories being transmitted as Array sometimes. (Thanks ammonlee.)
