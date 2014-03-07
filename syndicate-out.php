@@ -107,15 +107,24 @@ if ( is_admin() ) {
 	 // Meta box (only shows when one or more group has 'post' as the trigger...
 	function syndicate_out_meta_box( $post ) {
 
-		//
+		if ( false !== ( $syndicateOutOptions = get_option( 'so_options' ) ) ) {
+			if ( isset( $syndicateOutOptions['group'] ) && is_array( $syndicateOutOptions['group'] ) ) {
+				foreach ( $syndicateOutOptions['group'] AS $syndicationGroup) {
+					if ( 'post' == $syndicationGroup['trigger'] ) {
+						add_meta_box( 'syndicateoutdiv', __( 'Syndicate Post', 'syndicate-out' ), 'syndicate_out_meta_box_content', 'post', 'side', 'default' );
+						break;
+					}
+				}
+			}
+		}
 
 	}
 	
 	 // Meta box content...
-	function syndicate_out_meta_box_content( $post ) {
+	function syndicate_out_meta_box_content( $post, $metabox ) {
 
 		//
-	
+
 	}
 
  /* Post / action section. */
