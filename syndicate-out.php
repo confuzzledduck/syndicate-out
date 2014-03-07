@@ -45,6 +45,7 @@ if ( is_admin() ) {
 	 // Register functions...
 	add_action( 'plugins_loaded', 'syndicate_out_init' );
 	add_action( 'admin_menu', 'syndicate_out_menu' );
+	add_action( 'add_meta_boxes_post', 'syndicate_out_meta_box' );
 	add_action( 'admin_init', 'syndicate_out_register_settings' );
 	add_action( 'save_post', 'syndicate_out_post' );
 	add_filter( 'plugin_action_links', 'syndicate_out_settings_link', 10, 2 );
@@ -101,6 +102,20 @@ if ( is_admin() ) {
 
 		require_once( 'so-options.php' );
 
+	}
+	
+	 // Meta box (only shows when one or more group has 'post' as the trigger...
+	function syndicate_out_meta_box( $post ) {
+
+		//
+
+	}
+	
+	 // Meta box content...
+	function syndicate_out_meta_box_content( $post ) {
+
+		//
+	
 	}
 
  /* Post / action section. */
