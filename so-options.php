@@ -56,10 +56,10 @@
 							<select id="triggermethod-<?php echo $groupKey; ?>" name="so_options[group][<?php echo $groupKey ?>][trigger]" onchange="toggleTriggerCategory(<?php echo $groupKey ?>, this.value);">
 								<option value="disable"<?php echo ( 'none' == $syndicationGroup['category'] ) ? ' selected="selected"' : ''; ?>><?php _e( 'Disabled', 'syndicate-out' ); ?></option>
 								<option value="all"<?php echo ( -1 == $syndicationGroup['category'] ) ? ' selected="selected"' : ''; ?>><?php _e( 'All posts', 'syndicate-out' ); ?></option>
+								<option value="post"<?php echo ( -2 == $syndicationGroup['category'] ) ? ' selected="selected"' : ''; ?>><?php _e( 'Selected posts', 'syndicate-out' ); ?></option>
 								<option value="category"<?php echo ( 0 < $syndicationGroup['category'] ) ? ' selected="selected"' : ''; ?>><?php _e( 'Selected category', 'syndicate-out' ); ?></option>
-								<!--<option value="post"><?php _e( 'Selected posts', 'syndicate-out' ); ?></option>-->
 							</select>
-							<select id="triggercategory-<?php echo $groupKey; ?>" name="so_options[group][<?php echo $groupKey ?>][category]" <?php if ( -1 == $syndicationGroup['category'] || 'none' == $syndicationGroup['category'] ) { echo 'disabled="true"'; } ?>>
+							<select id="triggercategory-<?php echo $groupKey; ?>" name="so_options[group][<?php echo $groupKey ?>][category]" <?php if ( 0 > $syndicationGroup['category'] || 'none' == $syndicationGroup['category'] ) { echo 'disabled="true"'; } ?>>
 								<option value="-1"><?php _e( 'Select category', 'syndicate-out' ); ?></option>
 <?php
 			foreach ( get_categories( array ( 'hide_empty' => 0 ) ) AS $blogCategory ) {

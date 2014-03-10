@@ -71,7 +71,7 @@ if ( is_admin() ) {
 	}
 
 	 // Settings link on plugins page...
-	function syndicate_out_settings_link($links, $file) {
+	function syndicate_out_settings_link( $links, $file ) {
 
 		if ( plugin_basename( __FILE__ ) == $file ) {
 			array_push( $links, '<a href="options-general.php?page=syndicate_out">'.__( 'Settings', 'syndicate-out' ).'</a>' );
@@ -110,8 +110,8 @@ if ( is_admin() ) {
 		if ( false !== ( $syndicateOutOptions = get_option( 'so_options' ) ) ) {
 			if ( isset( $syndicateOutOptions['group'] ) && is_array( $syndicateOutOptions['group'] ) ) {
 				foreach ( $syndicateOutOptions['group'] AS $syndicationGroup) {
-					if ( 'post' == $syndicationGroup['trigger'] ) {
-						add_meta_box( 'syndicateoutdiv', __( 'Syndicate Post', 'syndicate-out' ), 'syndicate_out_meta_box_content', 'post', 'side', 'default' );
+					if ( -2 == $syndicationGroup['category'] ) {
+						add_meta_box( 'syndicateoutdiv', __( 'Syndicate Post', 'syndicate-out' ), 'syndicate_out_meta_box_content', 'post', 'side', 'default', $syndicateOutOptions );
 						break;
 					}
 				}
@@ -121,9 +121,19 @@ if ( is_admin() ) {
 	}
 	
 	 // Meta box content...
-	function syndicate_out_meta_box_content( $post, $metabox ) {
+	function syndicate_out_meta_box_content( $post, $metabox, $syndicateOutOptions ) {
 
-		//
+		if ( false !== ( $syndicateOutOptions = $metabox['args'] ) ) {
+			if ( isset( $syndicateOutOptions['group'] ) && is_array( $syndicateOutOptions['group'] ) ) {
+				foreach ( $syndicateOutOptions['group'] AS $syndicationGroupKey => $syndicationGroup) {
+					if ( -2 == $syndicationGroup['category'] ) {
+						foreach ( $syndicationGroup['servers'] AS $syndicationGroupServerKey => $syndicationGroupServer ) {
+							echo '<input type="checkbox" name="so_syndicate[group]['.htmlentities2( $syndicationGroupKey ).']['.htmlentities2( $syndicationGroupServerKey ).']" value="1" />'.$syndicationGroupServer['server'].'<br />'.PHP_EOL;
+						}
+					}
+				}
+			}
+		}
 
 	}
 
@@ -161,6 +171,9 @@ if ( is_admin() ) {
 						switch ( $groupOptions['trigger'] ) {
 							case 'all':
 								$newOptions['group'][$groupId]['category'] = -1;
+							break;
+							case 'post':
+								$newOptions['group'][$groupId]['category'] = -2;
 							break;
 							case 'category':
 								if ( is_numeric( $groupOptions['category'] ) ) {
