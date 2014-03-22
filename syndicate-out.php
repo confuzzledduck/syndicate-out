@@ -127,8 +127,8 @@ if ( is_admin() ) {
 			if ( isset( $syndicateOutOptions['group'] ) && is_array( $syndicateOutOptions['group'] ) ) {
 				foreach ( $syndicateOutOptions['group'] AS $syndicationGroupKey => $syndicationGroup) {
 					if ( -2 == $syndicationGroup['category'] ) {
-						foreach ( $syndicationGroup['servers'] AS $syndicationGroupServerKey => $syndicationGroupServer ) {
-							echo '<input type="checkbox" name="so_syndicate[group]['.htmlentities2( $syndicationGroupKey ).']['.htmlentities2( $syndicationGroupServerKey ).']" value="1" />'.$syndicationGroupServer['server'].'<br />'.PHP_EOL;
+						echo '<input type="checkbox" name="so_syndicate[group]['.htmlentities2( $syndicationGroupKey ).']" value="1" /><span style="font-weight: bold;">'.esc_html( sprintf( __( 'Syndication Group %s', 'syndicate-out' ), number_format_i18n( ( $syndicationGroupKey + 1 ) ) ) ).'</span><br />'.PHP_EOL;						foreach ( $syndicationGroup['servers'] AS $syndicationGroupServerKey => $syndicationGroupServer ) {
+							echo '<span style="margin-left: 21px;">'.esc_html( $syndicationGroupServer['server'] ).'</span><br />'.PHP_EOL;
 						}
 					}
 				}
@@ -268,7 +268,8 @@ if ( is_admin() ) {
 	
 		if ( $soOptions = get_option( 'so_options' ) ) {
 			if ( isset( $soOptions['group'] ) && is_array( $soOptions['group'] ) ) {
-			
+
+	 // Groups activated by global settings...
 				$activeGroups = array();
 				foreach ( $soOptions['group'] AS $syndicationGroupKey => $syndicationGroup ) {
 					$categories = get_the_category( $postId );
@@ -281,6 +282,9 @@ if ( is_admin() ) {
 						$activeGroups[$syndicationGroupKey] = $syndicationGroup;
 					}
 				}
+				
+	 // Groups activated by per-post selection...
+				//
 				
 				if ( count( $activeGroups ) > 0 ) {
 		
