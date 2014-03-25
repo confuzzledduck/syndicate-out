@@ -1,5 +1,8 @@
 <?php
 
+ini_set('display_errors', true);
+error_reporting(E_ALL);
+
 /*
 
 	Plugin Name: Syndicate Out
@@ -121,7 +124,7 @@ if ( is_admin() ) {
 	}
 	
 	 // Meta box content...
-	function syndicate_out_meta_box_content( $post, $metabox, $syndicateOutOptions ) {
+	function syndicate_out_meta_box_content( $post, $metabox ) {
 
 		if ( false !== ( $syndicateOutOptions = $metabox['args'] ) ) {
 			if ( isset( $syndicateOutOptions['group'] ) && is_array( $syndicateOutOptions['group'] ) ) {
@@ -266,147 +269,164 @@ if ( is_admin() ) {
 	 // Carry out the syndication on post insert...
 	function syndicate_out_post( $postId ) {
 	
-		if ( $soOptions = get_option( 'so_options' ) ) {
-			if ( isset( $soOptions['group'] ) && is_array( $soOptions['group'] ) ) {
+		if ( wp_is_post_revision( $postId ) && ! wp_is_post_autosave( $postId ) ) {
+	
+			if ( $soOptions = get_option( 'so_options' ) ) {
+				if ( isset( $soOptions['group'] ) && is_array( $soOptions['group'] ) ) {
+
+					$activeGroups = array();
 
 	 // Groups activated by global settings...
-				$activeGroups = array();
-				foreach ( $soOptions['group'] AS $syndicationGroupKey => $syndicationGroup ) {
-					$categories = get_the_category( $postId );
-					if ( 0 == count( $categories ) ) {
-						if ( null != $_POST['post_category'] ) {
-							$categories = $_POST['post_category'];
+					foreach ( $soOptions['group'] AS $syndicationGroupKey => $syndicationGroup ) {
+						$categories = get_the_category( $postId );
+						if ( 0 == count( $categories ) ) {
+							if ( null != $_POST['post_category'] ) {
+								$categories = $_POST['post_category'];
+							}
+						}
+						if ( ( -1 == $syndicationGroup['category'] ) || in_array( $syndicationGroup['category'], $categories ) ) {
+							$activeGroups[$syndicationGroupKey] = $syndicationGroup;
 						}
 					}
-					if ( ( -1 == $syndicationGroup['category'] ) || in_array( $syndicationGroup['category'], $categories ) ) {
-						$activeGroups[$syndicationGroupKey] = $syndicationGroup;
-					}
-				}
 				
 	 // Groups activated by per-post selection...
-				//
-				
-				if ( count( $activeGroups ) > 0 ) {
+					if ( isset( $_POST['so_syndicate']['group'] ) && is_array( $_POST['so_syndicate']['group'] ) ) {
+						foreach ( $_POST['so_syndicate']['group'] AS $groupKey => $value ) {
+							if ( ( '1' == $value ) && is_int( $groupKey ) ) {
+								if ( ! array_key_exists( $groupKey, $activeGroups ) ) {
+									$activeGroups[$groupKey] = $soOptions['group'][$groupKey];
+								}
+							}
+						}
+					}
+
+					if ( count( $activeGroups ) > 0 ) {
 		
 	 // Get required post information...
-					$postData = get_post( $postId );
-					if ( in_array( $postData->post_status, array( 'publish', 'inherit', 'future' ) ) ) {
+						$postData = get_post( $postId );
+						if ( in_array( $postData->post_status, array( 'publish', 'inherit', 'future' ) ) ) {
 							
 	 // Include the required IXR libraries...
-						if ( @include_once(  ABSPATH . WPINC . '/class-IXR.php' ) &&
-						     @include_once(  ABSPATH . WPINC . '/class-wp-http-ixr-client.php' ) ) {
-							
-							if ( 'inherit' == $postData->post_status ) {
-								$postMetaId = $postData->post_parent;
-								$postData->post_status = get_post_status( $postMetaId );
-							} else {
-								$postMetaId = $postId;
-							}
+							if ( include_once(  ABSPATH . WPINC . '/class-IXR.php' ) ) {
+								if ( include_once(  ABSPATH . WPINC . '/class-wp-http-ixr-client.php' ) ) {
+
+									if ( 'inherit' == $postData->post_status ) {
+										$postMetaId = $postData->post_parent;
+										$postData->post_status = get_post_status( $postMetaId );
+									} else {
+										$postMetaId = $postId;
+									}
 
 	 // General post related stuff...
-							$syndicateElements = array( 'post_type', 'post_status', 'post_title',
-							                            'post_excerpt', 'post_content', 'post_format',
-							                            'post_password', 'comment_status', 'ping_status',
-							                            'post_date_gmt' );
-							$remotePost = array();
-							foreach ( $postData AS $dataItemKey => $dataItemContent ) {
-								if ( in_array( $dataItemKey, $syndicateElements ) ) {
-									$remotePost[$dataItemKey] = $dataItemContent;
-								}
-							}
-							if ( isset( $remotePost['post_date_gmt'] ) ) {
-								$remotePost['post_date_gmt'] = new IXR_Date( strtotime( $remotePost['post_date_gmt'] ) );
-							}
+									$syndicateElements = array( 'post_type', 'post_status', 'post_title',
+									                            'post_excerpt', 'post_content', 'post_format',
+									                            'post_password', 'comment_status', 'ping_status',
+									                            'post_date_gmt' );
+									$remotePost = array();
+									foreach ( $postData AS $dataItemKey => $dataItemContent ) {
+										if ( in_array( $dataItemKey, $syndicateElements ) ) {
+											$remotePost[$dataItemKey] = $dataItemContent;
+										}
+									}
+									if ( isset( $remotePost['post_date_gmt'] ) ) {
+										$remotePost['post_date_gmt'] = new IXR_Date( strtotime( $remotePost['post_date_gmt'] ) );
+									}
 
 	 // Custom fields...
-							$postMeta = has_meta( $postMetaId );
-							if ( is_array( $postMeta ) ) {
-								$remotePost['custom_fields'] = array();
-								foreach ( $postMeta AS $metaSingle ) {
-									if ( $metaSingle['meta_key'][0] != '_' ) {
-										$remotePost['custom_fields'][] = array( 'key' => $metaSingle['meta_key'],
-										                                        'value' => $metaSingle['meta_value'] );
+									$postMeta = has_meta( $postMetaId );
+									if ( is_array( $postMeta ) ) {
+										$remotePost['custom_fields'] = array();
+										foreach ( $postMeta AS $metaSingle ) {
+											if ( $metaSingle['meta_key'][0] != '_' ) {
+												$remotePost['custom_fields'][] = array( 'key' => $metaSingle['meta_key'],
+												                                        'value' => $metaSingle['meta_value'] );
+											}
+										}
 									}
-								}
-							}
 						
 	 // Tags...
-							$remotePost['terms_names'] = array();
-							if ( $postTags = syndicate_out_get_tags( $postId ) ) {
-								$remotePost['terms_names']['post_tag'] = array();
-								foreach ( $postTags AS $postTag ) {
-									$remotePost['terms_names']['post_tag'][] = $postTag->name;
-								}
-							}
+									$remotePost['terms_names'] = array();
+									if ( $postTags = syndicate_out_get_tags( $postId ) ) {
+										$remotePost['terms_names']['post_tag'] = array();
+										foreach ( $postTags AS $postTag ) {
+											$remotePost['terms_names']['post_tag'][] = $postTag->name;
+										}
+									}
 
 	 // Categories...
-							$groupCategoryArray = array();
-							foreach ( $activeGroups AS $groupKey => $groupDetails ) {
-								if ( 'none' != $groupDetails['syndicate_category'] ) {
-									if ( 'syndication' == $groupDetails['syndicate_category'] && ( -1 != $syndicationGroup['category'] ) ) {
-										$groupCategoryArray[$groupKey] = array( get_cat_name( $groupDetails['category'] ) );
-									} else if ( ( 'all' == $groupDetails['syndicate_category'] ) || ( -1 == $syndicationGroup['category'] ) ) {
-										$categories = $_POST['post_category'];
-										$groupCategoryArray[$groupKey] = array();
-										foreach ( $categories AS $postCategory ) {
-											if ( 0 != $postCategory ) {
-												$groupCategoryArray[$groupKey][] = get_cat_name( $postCategory );
+									$groupCategoryArray = array();
+									foreach ( $activeGroups AS $groupKey => $groupDetails ) {
+										if ( 'none' != $groupDetails['syndicate_category'] ) {
+											if ( 'syndication' == $groupDetails['syndicate_category'] && ( -1 != $syndicationGroup['category'] ) ) {
+												if ( $groupDetails['category'] > 0 ) {
+													$groupCategoryArray[$groupKey] = array( get_cat_name( $groupDetails['category'] ) );
+												}
+											} else if ( ( 'all' == $groupDetails['syndicate_category'] ) || ( -1 == $syndicationGroup['category'] ) ) {
+												$categories = $_POST['post_category'];
+												$groupCategoryArray[$groupKey] = array();
+												foreach ( $categories AS $postCategory ) {
+													if ( 0 != $postCategory ) {
+														$groupCategoryArray[$groupKey][] = get_cat_name( $postCategory );
+													}
+												}
 											}
 										}
-									}
-								}
 
-							}
+									}
 
 	 // Publish the post to the remote blog(s)...
-							if ( false !== ( $remotePostIds = unserialize( get_post_meta( $postMetaId, '_so_remote_posts', true ) ) ) ) {
-								if ( ! isset( $remotePostIds['options_version'] ) ) {
-									$newRemotePostIds = array( 'options_version' => SO_OPTIONS_VERSION );
-									foreach ( $remotePostIds AS $serverKey => $remotePostId ) {
-										$newRemotePostIds['group'][0][$serverKey] = $remotePostId;
-									}
-									$remotePostIds = $newRemotePostIds;
-									update_post_meta( $postMetaId, '_so_remote_posts', serialize( $remotePostIds ) );
-								}
-								foreach ( $remotePostIds['group'] AS $groupKey => $remoteServers ) {
-									$compiledGroupPost = $remotePost;
-									if ( isset( $groupCategoryArray[$groupKey] ) ) {
-										$compiledGroupPost['terms_names']['category'] = $groupCategoryArray[$groupKey];
-									}
-									foreach ( $remoteServers AS $serverKey => $remotePostId ) {
-										if ( is_numeric( $remotePostId ) ) {
-											if ( isset( $soOptions['group'][$groupKey]['servers'][$serverKey] ) ) {
-												$thisServerPost = syndicate_out_clean_for_remote( $soOptions['group'][$groupKey]['servers'][$serverKey]['server'], $soOptions['group'][$groupKey]['servers'][$serverKey]['username'], $soOptions['group'][$groupKey]['servers'][$serverKey]['password'], $compiledGroupPost );
-												$xmlrpc = new WP_HTTP_IXR_CLIENT( $soOptions['group'][$groupKey]['servers'][$serverKey]['server'].'xmlrpc.php' );
-												$xmlrpc->query( 'wp.editPost', array( 0, $soOptions['group'][$groupKey]['servers'][$serverKey]['username'], $soOptions['group'][$groupKey]['servers'][$serverKey]['password'], $remotePostId, $thisServerPost ) );
+									if ( false !== ( $remotePostIds = unserialize( get_post_meta( $postMetaId, '_so_remote_posts', true ) ) ) ) {
+										if ( ! isset( $remotePostIds['options_version'] ) ) {
+											$newRemotePostIds = array( 'options_version' => SO_OPTIONS_VERSION );
+											foreach ( $remotePostIds AS $serverKey => $remotePostId ) {
+												$newRemotePostIds['group'][0][$serverKey] = $remotePostId;
+											}
+											$remotePostIds = $newRemotePostIds;
+											update_post_meta( $postMetaId, '_so_remote_posts', serialize( $remotePostIds ) );
+										}
+										foreach ( $remotePostIds['group'] AS $groupKey => $remoteServers ) {
+											$compiledGroupPost = $remotePost;
+											if ( isset( $groupCategoryArray[$groupKey] ) ) {
+												$compiledGroupPost['terms_names']['category'] = $groupCategoryArray[$groupKey];
+											}
+											foreach ( $remoteServers AS $serverKey => $remotePostId ) {
+												if ( is_numeric( $remotePostId ) ) {
+													if ( isset( $soOptions['group'][$groupKey]['servers'][$serverKey] ) ) {
+														$thisServerPost = syndicate_out_clean_for_remote( $soOptions['group'][$groupKey]['servers'][$serverKey]['server'], $soOptions['group'][$groupKey]['servers'][$serverKey]['username'], $soOptions['group'][$groupKey]['servers'][$serverKey]['password'], $compiledGroupPost );
+														$xmlrpc = new WP_HTTP_IXR_CLIENT( $soOptions['group'][$groupKey]['servers'][$serverKey]['server'].'xmlrpc.php' );
+														$xmlrpc->query( 'wp.editPost', array( 0, $soOptions['group'][$groupKey]['servers'][$serverKey]['username'], $soOptions['group'][$groupKey]['servers'][$serverKey]['password'], $remotePostId, $thisServerPost ) );
+													}
+												}
 											}
 										}
+									} else {
+										$remotePostInformation = array( 'options_version' => SO_OPTIONS_VERSION );
+										foreach ( $activeGroups AS $groupKey => $activeGroup ) {
+											$compiledGroupPost = $remotePost;
+											if ( isset( $groupCategoryArray[$groupKey] ) ) {
+												$compiledGroupPost['terms_names']['category'] = $groupCategoryArray[$groupKey];
+											}
+											foreach ( $activeGroup['servers'] AS $serverKey => $serverDetails ) {
+												$thisServerPost = syndicate_out_clean_for_remote( $soOptions['group'][$groupKey]['servers'][$serverKey]['server'], $soOptions['group'][$groupKey]['servers'][$serverKey]['username'], $soOptions['group'][$groupKey]['servers'][$serverKey]['password'], $compiledGroupPost );
+												$xmlrpc = new WP_HTTP_IXR_CLIENT( $serverDetails['server'].'xmlrpc.php' );
+												$xmlrpc->query( 'wp.newPost', array( 0, $serverDetails['username'], $serverDetails['password'], $thisServerPost ) );
+//var_dump($thisServerPost, $xmlrpc->getResponse()); exit;
+												$remotePostInformation['group'][$groupKey][$serverKey] = $xmlrpc->getResponse();
+											}
+										}
+										update_post_meta( $postMetaId, '_so_remote_posts', serialize( $remotePostInformation ) );
 									}
+
 								}
-							} else {
-								$remotePostInformation = array( 'options_version' => SO_OPTIONS_VERSION );
-								foreach ( $activeGroups AS $groupKey => $activeGroup ) {
-									$compiledGroupPost = $remotePost;
-									if ( isset( $groupCategoryArray[$groupKey] ) ) {
-										$compiledGroupPost['terms_names']['category'] = $groupCategoryArray[$groupKey];
-									}
-									foreach ( $activeGroup['servers'] AS $serverKey => $serverDetails ) {
-										$thisServerPost = syndicate_out_clean_for_remote( $soOptions['group'][$groupKey]['servers'][$serverKey]['server'], $soOptions['group'][$groupKey]['servers'][$serverKey]['username'], $soOptions['group'][$groupKey]['servers'][$serverKey]['password'], $compiledGroupPost );
-										$xmlrpc = new WP_HTTP_IXR_CLIENT( $serverDetails['server'].'xmlrpc.php' );
-										$xmlrpc->query( 'wp.newPost', array( 0, $serverDetails['username'], $serverDetails['password'], $thisServerPost ) );
-										$remotePostInformation['group'][$groupKey][$serverKey] = $xmlrpc->getResponse();
-									}
-								}
-								update_post_meta( $postMetaId, '_so_remote_posts', serialize( $remotePostInformation ) );
 							}
 
 						}
-							
+
 					}
-						
+
 				}
-			
 			}
+		
 		}
 
 	}
