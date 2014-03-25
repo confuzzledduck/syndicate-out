@@ -1,8 +1,5 @@
 <?php
 
-ini_set('display_errors', true);
-error_reporting(E_ALL);
-
 /*
 
 	Plugin Name: Syndicate Out
@@ -125,12 +122,18 @@ if ( is_admin() ) {
 	
 	 // Meta box content...
 	function syndicate_out_meta_box_content( $post, $metabox ) {
-
+	
 		if ( false !== ( $syndicateOutOptions = $metabox['args'] ) ) {
 			if ( isset( $syndicateOutOptions['group'] ) && is_array( $syndicateOutOptions['group'] ) ) {
+				$postSoMeta = get_post_meta( $post->ID, '_so_remote_posts', true );
+				if ( ! empty( $postSoMeta ) ) {
+					$postSoMeta = unserialize( $postSoMeta );
+					$syndicatedGroups = $postSoMeta['group'];
+				}
 				foreach ( $syndicateOutOptions['group'] AS $syndicationGroupKey => $syndicationGroup) {
 					if ( -2 == $syndicationGroup['category'] ) {
-						echo '<input type="checkbox" name="so_syndicate[group]['.htmlentities2( $syndicationGroupKey ).']" value="1" /><span style="font-weight: bold;">'.esc_html( sprintf( __( 'Syndication Group %s', 'syndicate-out' ), number_format_i18n( ( $syndicationGroupKey + 1 ) ) ) ).'</span><br />'.PHP_EOL;						foreach ( $syndicationGroup['servers'] AS $syndicationGroupServerKey => $syndicationGroupServer ) {
+						echo '<input type="checkbox" name="so_syndicate[group]['.htmlentities2( $syndicationGroupKey ).']" value="1"'.( ( isset( $syndicatedGroups[$syndicationGroupKey] ) && ( count( $syndicatedGroups[$syndicationGroupKey] ) ) > 0 ) ? ' checked="checked"' : '' ).' /><span style="font-weight: bold;">'.esc_html( sprintf( __( 'Syndication Group %s', 'syndicate-out' ), number_format_i18n( ( $syndicationGroupKey + 1 ) ) ) ).'</span><br />'.PHP_EOL;
+						foreach ( $syndicationGroup['servers'] AS $syndicationGroupServerKey => $syndicationGroupServer ) {
 							echo '<span style="margin-left: 21px;">'.esc_html( $syndicationGroupServer['server'] ).'</span><br />'.PHP_EOL;
 						}
 					}
@@ -410,7 +413,6 @@ if ( is_admin() ) {
 												$thisServerPost = syndicate_out_clean_for_remote( $soOptions['group'][$groupKey]['servers'][$serverKey]['server'], $soOptions['group'][$groupKey]['servers'][$serverKey]['username'], $soOptions['group'][$groupKey]['servers'][$serverKey]['password'], $compiledGroupPost );
 												$xmlrpc = new WP_HTTP_IXR_CLIENT( $serverDetails['server'].'xmlrpc.php' );
 												$xmlrpc->query( 'wp.newPost', array( 0, $serverDetails['username'], $serverDetails['password'], $thisServerPost ) );
-//var_dump($thisServerPost, $xmlrpc->getResponse()); exit;
 												$remotePostInformation['group'][$groupKey][$serverKey] = $xmlrpc->getResponse();
 											}
 										}
