@@ -3,7 +3,7 @@ Contributors: ConfuzzledDuck
 Tags: syndication, xmlrpc, cross-post, post, content, autoblogging, duplicate
 Requires at least: 3.4
 Tested up to: 3.8
-Stable tag: 0.8.2.2
+Stable tag: 0.8.3
 
 Syndicates posts made in any specified category to another WP blog using WordPress' built in XML-RPC functionality.
 
@@ -43,6 +43,8 @@ The post should immediately be cross-posted to the remote blog.
 * Fully internationalized the plugin.
 * Added Spanish translation. (Muchas gracias Andrew, Jelena and WebHostingHub.)
 * Prevented trampling on https-based URLs. (Multumesc Marius.)
+* Added per-post selection of syndication.
+* Fixed some notices when running with PHP strict errors turned on.
 
 = 0.8.2.2 =
 * Fixed a bug relating to post categories being transmitted as Array sometimes. (Thanks ammonlee.)
