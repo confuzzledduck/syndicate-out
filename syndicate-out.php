@@ -4,7 +4,7 @@
 
 	Plugin Name: Syndicate Out
 	Plugin URI: http://www.flutt.co.uk/development/wordpress-plugins/syndicate-out/
-	Version: 0.8.3
+	Version: 0.8.4
 	Text Domain: syndicate-out
 	Domain Path: /lang
 	Description: Syndicates posts made in any specified category to another WP blog using WordPress' built in XML-RPC functionality.
@@ -377,6 +377,25 @@ if ( is_admin() ) {
 
 									}
 
+	/**
+	 * Filter post content to be syndicated before it is sent to any targets.
+	 *
+	 * @since 0.8.4
+	 *
+	 * @param array $remotePost Post data to be sent to the remote servers as an array.
+	 * @param string $postId ID of post being syndicated.
+	 */
+									$remotePost = apply_filters( 'syndicate_post_content', $remotePost, $postId );
+
+	/**
+	 * Fires before a post is syndicated to ANY destinations.
+	 *
+	 * @since 0.8.4
+	 *
+	 * @param string $postId ID of post being syndicated.
+	 */
+									do_action( 'syndicate_post_before_all', $postId );
+									
 	 // Publish the post to the remote blog(s)...
 									if ( false !== ( $remotePostIds = unserialize( get_post_meta( $postMetaId, '_so_remote_posts', true ) ) ) ) {
 										if ( ! isset( $remotePostIds['options_version'] ) ) {
@@ -395,9 +414,35 @@ if ( is_admin() ) {
 											foreach ( $remoteServers AS $serverKey => $remotePostId ) {
 												if ( is_numeric( $remotePostId ) ) {
 													if ( isset( $soOptions['group'][$groupKey]['servers'][$serverKey] ) ) {
+													
+	/**
+	 * Fires before a post is syndicated to EACH destination. Fires for both
+	 * posts which will be updates and for posts which will be new posts on the
+	 * remote blogs.
+	 *
+	 * @since 0.8.4
+	 *
+	 * @param string $postId ID of post being syndicated.
+	 * @param string $soOptions Hostname of the server being syndicated to.
+	 */
+														do_action( 'syndicate_post_before_server', $postId, $soOptions['group'][$groupKey]['servers'][$serverKey]['server'] );
+														
 														$thisServerPost = syndicate_out_clean_for_remote( $soOptions['group'][$groupKey]['servers'][$serverKey]['server'], $soOptions['group'][$groupKey]['servers'][$serverKey]['username'], $soOptions['group'][$groupKey]['servers'][$serverKey]['password'], $compiledGroupPost );
 														$xmlrpc = new WP_HTTP_IXR_CLIENT( $soOptions['group'][$groupKey]['servers'][$serverKey]['server'].'xmlrpc.php' );
 														$xmlrpc->query( 'wp.editPost', array( 0, $soOptions['group'][$groupKey]['servers'][$serverKey]['username'], $soOptions['group'][$groupKey]['servers'][$serverKey]['password'], $remotePostId, $thisServerPost ) );
+														
+	/**
+	 * Fires after a post is syndicated to EACH destination. Fires for both
+	 * posts which will be updates and for posts which will be new posts on the
+	 * remote blogs.
+	 *
+	 * @since 0.8.4
+	 *
+	 * @param string $postId ID of post being syndicated.
+	 * @param string $soOptions Hostname of the server being syndicated to.
+	 */
+														do_action( 'syndicate_post_after_server', $postId, $soOptions['group'][$groupKey]['servers'][$serverKey]['server'] );
+														
 													}
 												}
 											}
@@ -410,14 +455,29 @@ if ( is_admin() ) {
 												$compiledGroupPost['terms_names']['category'] = $groupCategoryArray[$groupKey];
 											}
 											foreach ( $activeGroup['servers'] AS $serverKey => $serverDetails ) {
+											
+												do_action( 'syndicate_post_before_server', $postId, $serverDetails['server'] );
+											
 												$thisServerPost = syndicate_out_clean_for_remote( $soOptions['group'][$groupKey]['servers'][$serverKey]['server'], $soOptions['group'][$groupKey]['servers'][$serverKey]['username'], $soOptions['group'][$groupKey]['servers'][$serverKey]['password'], $compiledGroupPost );
 												$xmlrpc = new WP_HTTP_IXR_CLIENT( $serverDetails['server'].'xmlrpc.php' );
 												$xmlrpc->query( 'wp.newPost', array( 0, $serverDetails['username'], $serverDetails['password'], $thisServerPost ) );
 												$remotePostInformation['group'][$groupKey][$serverKey] = $xmlrpc->getResponse();
+												
+												do_action( 'syndicate_post_after_server', $postId, $serverDetails['server'] );
+												
 											}
 										}
 										update_post_meta( $postMetaId, '_so_remote_posts', serialize( $remotePostInformation ) );
 									}
+									
+	/**
+	 * Fires after a post is syndicated to ALL destinations.
+	 *
+	 * @since 0.8.4
+	 *
+	 * @param string $postId ID of post being syndicated.
+	 */
+									do_action( 'syndicate_post_after_all', $postId );
 
 								}
 							}

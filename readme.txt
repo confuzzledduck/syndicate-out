@@ -38,6 +38,9 @@ The post should immediately be cross-posted to the remote blog.
 
 == Changelog ==
 
+= 0.8.4 =
+* Added hooks for actions and filters to syndication process.
+
 = 0.8.3 =
 * Efficiency improvements in syndication routine.
 * Fully internationalized the plugin.
