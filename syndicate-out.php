@@ -193,7 +193,7 @@ if ( is_admin() ) {
 
 	 // Transmit category...
 						switch ( $groupOptions['syndicate_category'] ) {
-							case 'all': case 'syndication':
+							case 'all': case 'syndication': case 'allbut':
 								$newOptions['group'][$groupId]['syndicate_category'] = $groupOptions['syndicate_category'];
 							break;
 							default:
@@ -364,11 +364,14 @@ if ( is_admin() ) {
 												if ( $groupDetails['category'] > 0 ) {
 													$groupCategoryArray[$groupKey] = array( get_cat_name( $groupDetails['category'] ) );
 												}
-											} else if ( ( 'all' == $groupDetails['syndicate_category'] ) || ( -1 == $syndicationGroup['category'] ) ) {
+											} else if ( ( 'all' == $groupDetails['syndicate_category'] ) || ( 'allbut' == $groupDetails['syndicate_category'] ) || ( -1 == $syndicationGroup['category'] ) ) {
 												$categories = $_POST['post_category'];
 												$groupCategoryArray[$groupKey] = array();
 												foreach ( $categories AS $postCategory ) {
 													if ( 0 != $postCategory ) {
+														if ( ( $postCategory == $groupDetails['category'] ) && ( 'allbut' == $groupDetails['syndicate_category'] ) ) {
+															continue;
+														}
 														$groupCategoryArray[$groupKey][] = get_cat_name( $postCategory );
 													}
 												}
