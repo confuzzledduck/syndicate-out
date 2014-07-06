@@ -273,7 +273,7 @@ if ( is_admin() ) {
 	function syndicate_out_post( $postId ) {
 	
 		if ( wp_is_post_revision( $postId ) && ! wp_is_post_autosave( $postId ) ) {
-	
+
 			if ( $soOptions = get_option( 'so_options' ) ) {
 				if ( isset( $soOptions['group'] ) && is_array( $soOptions['group'] ) ) {
 
@@ -291,7 +291,7 @@ if ( is_admin() ) {
 							$activeGroups[$syndicationGroupKey] = $syndicationGroup;
 						}
 					}
-				
+
 	 // Groups activated by per-post selection...
 					if ( isset( $_POST['so_syndicate']['group'] ) && is_array( $_POST['so_syndicate']['group'] ) ) {
 						foreach ( $_POST['so_syndicate']['group'] AS $groupKey => $value ) {
@@ -304,11 +304,12 @@ if ( is_admin() ) {
 					}
 
 					if ( count( $activeGroups ) > 0 ) {
-		
+
 	 // Get required post information...
 						$postData = get_post( $postId );
-						if ( in_array( $postData->post_status, array( 'publish', 'inherit', 'future' ) ) ) {
-							
+						$remotePost = array( 'post_type' => syndicate_out_get_post_type( $postData ) );
+						if ( ( 'page' != $remotePost['post_type'] ) && in_array( $postData->post_status, array( 'publish', 'inherit', 'future' ) ) ) {
+
 	 // Include the required IXR libraries...
 							if ( include_once(  ABSPATH . WPINC . '/class-IXR.php' ) ) {
 								if ( include_once(  ABSPATH . WPINC . '/class-wp-http-ixr-client.php' ) ) {
@@ -321,16 +322,15 @@ if ( is_admin() ) {
 									}
 
 	 // General post related stuff...
-									$syndicateElements = array( 'post_type', 'post_status', 'post_title',
-									                            'post_excerpt', 'post_content', 'post_format',
-									                            'post_password', 'comment_status', 'ping_status',
-									                            'post_date_gmt' );
-									$remotePost = array();
+									$syndicateElements = array( 'post_status', 'post_title', 'post_excerpt',
+									                            'post_content', 'post_format', 'post_password',
+									                            'comment_status', 'ping_status', 'post_date_gmt' );
 									foreach ( $postData AS $dataItemKey => $dataItemContent ) {
 										if ( in_array( $dataItemKey, $syndicateElements ) ) {
 											$remotePost[$dataItemKey] = $dataItemContent;
 										}
 									}
+									
 									if ( isset( $remotePost['post_date_gmt'] ) ) {
 										$remotePost['post_date_gmt'] = new IXR_Date( strtotime( $remotePost['post_date_gmt'] ) );
 									}
@@ -494,6 +494,23 @@ if ( is_admin() ) {
 		
 		}
 
+	}
+	
+	 // Returns a valid post type for the given post. Either simply the post type
+	 // speficied in the post (if it's not a revision), or the parent post type...
+	function syndicate_out_get_post_type( $postData ) {
+
+		if ( 'revision' == $postData->post_type ) {
+			$parentPostData = get_post( $postData->post_parent );
+			if ( null !== $parentPostData ) {
+				return $parentPostData->post_type;
+			} else {
+				return $postData->post_type;
+			}
+		} else {
+			return $postData->post_type;
+		}
+	
 	}
 	
 	 // Check the post is valid for (will be accepted by) the remote server
