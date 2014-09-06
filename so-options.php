@@ -34,19 +34,49 @@
 
 <?php
 	if ( isset( $syndicateOutOptions['group'] ) && is_array( $syndicateOutOptions['group'] ) ) {
-		if ( $newGroupRows > 0 ) {
-			$syndicateOutOptions['group'][] = array();
-		}
-		foreach ( $syndicateOutOptions['group'] AS $groupKey => $syndicationGroup ) {
-			$additionalRows = 0;
-			if ( is_array( $newServerRows ) && count( $newServerRows ) > 0 ) {
-				if ( array_key_exists( $groupKey, $newServerRows ) && $newServerRows[$groupKey] > 0 ) {
-					$additionalRows = $newServerRows[$groupKey];
-				}
+		if ( isset( $_GET['tab'] ) && !isset( $_GET['settings-updated'] ) ) {
+			if ( 'newgroup' == $_GET['tab'] ) {
+				$syndicateOutOptions['group'][] = array();
+				end($syndicateOutOptions['group']);
+				$activeTab = key( $syndicateOutOptions['group'] );
+				reset( $syndicateOutOptions['group'] );
+			} else {
+				$activeTab = $_GET['tab'];
 			}
+		} else {
+			$activeTab = 0;
+		}
+?>
+		<h2 class="nav-tab-wrapper">
+<?php
+		if ( count( $syndicateOutOptions['group'] ) > 0 ) {
+			foreach ( $syndicateOutOptions['group'] AS $groupKey => $syndicationGroup ) {
+?>
+			<a href="?page=syndicate_out&tab=<?php echo $groupKey; ?>" class="nav-tab <?php echo ( $activeTab == $groupKey ) ? 'nav-tab-active' : ''; ?>"><?php printf( __( 'Syndication Group %s', 'syndicate-out' ), number_format_i18n( ( $groupKey + 1 ) ) ); ?></a>
+<?php
+			}
+		} else {
+?>
+			<a href="?page=syndicate_out&tab=0" class="nav-tab nav-tab-active"><?php _e( 'Syndication Group 1', 'syndicate-out' ); ?></a>
+<?php
+		}
+?>
+			<a href="?page=syndicate_out&tab=newgroup" class="nav-tab"><?php _e( '+', 'syndicate-out' ); ?></a>
+		</h2>
+		
+<?php
+		//foreach ( $syndicateOutOptions['group'] AS $groupKey => $syndicationGroup ) {
+		$groupKey = $activeTab;
+		$syndicationGroup = $syndicateOutOptions['group'][$activeTab];
+		$additionalRows = 0;
+		if ( is_array( $newServerRows ) && count( $newServerRows ) > 0 ) {
+			if ( array_key_exists( $groupKey, $newServerRows ) && $newServerRows[$groupKey] > 0 ) {
+				$additionalRows = $newServerRows[$groupKey];
+			}
+		}
 ?>
 		<div style="padding-bottom: 15px;">
-			<h3><?php printf( __( 'Syndication Group %s', 'syndicate-out' ), number_format_i18n( ( $groupKey + 1 ) ) ); ?></h3>
+			<!--<h3><?php printf( __( 'Syndication Group %s', 'syndicate-out' ), number_format_i18n( ( $groupKey + 1 ) ) ); ?></h3>-->
 			
 			<table class="form-table">
 				<tbody>
@@ -62,9 +92,9 @@
 							<select id="triggercategory-<?php echo $groupKey; ?>" name="so_options[group][<?php echo $groupKey ?>][category]" <?php if ( isset( $syndicationGroup['category'] ) && ( 0 > $syndicationGroup['category'] || 'none' == $syndicationGroup['category'] ) ) { echo 'disabled="true"'; } ?>>
 								<option value="-1"><?php _e( 'Select category', 'syndicate-out' ); ?></option>
 <?php
-			foreach ( get_categories( array ( 'hide_empty' => 0 ) ) AS $blogCategory ) {
-				echo '<option value="'.$blogCategory->cat_ID.'"'.( ( isset( $syndicationGroup['category'] ) && ( $syndicationGroup['category'] == $blogCategory->cat_ID ) ) ? ' selected="selected"' : '' ).'>'.$blogCategory->cat_name.'</option>';
-			}
+		foreach ( get_categories( array ( 'hide_empty' => 0 ) ) AS $blogCategory ) {
+			echo '<option value="'.$blogCategory->cat_ID.'"'.( ( isset( $syndicationGroup['category'] ) && ( $syndicationGroup['category'] == $blogCategory->cat_ID ) ) ? ' selected="selected"' : '' ).'>'.$blogCategory->cat_name.'</option>';
+		}
 ?>
 							</select>
 						</td>
@@ -96,15 +126,15 @@
 				</thead>
 				<tbody>
 <?php
-			if ( ! isset( $syndicationGroup['servers'] ) || count( $syndicationGroup['servers'] ) == 0 || isset( $_POST['addrow'][$groupKey] ) ) {
+		if ( ! isset( $syndicationGroup['servers'] ) || count( $syndicationGroup['servers'] ) == 0 || isset( $_POST['addrow'][$groupKey] ) ) {
+			$syndicationGroup['servers'][] = array( 'server' => '', 'username' => '', 'password' => '' );
+		}
+		if ( $additionalRows > 0 ) {
+			for ($i = 0; $i < $additionalRows; $i++) {
 				$syndicationGroup['servers'][] = array( 'server' => '', 'username' => '', 'password' => '' );
 			}
-			if ( $additionalRows > 0 ) {
-				for ($i = 0; $i < $additionalRows; $i++) {
-					$syndicationGroup['servers'][] = array( 'server' => '', 'username' => '', 'password' => '' );
-				}
-			}
-			foreach ( $syndicationGroup['servers'] AS $serverKey => $soServer ) {
+		}
+		foreach ( $syndicationGroup['servers'] AS $serverKey => $soServer ) {
 ?>
 					<tr id="serverrow-<?php echo $serverKey ?>-<?php echo $groupKey ?>">
 						<th scope="row" class="check-column"><input type="checkbox" name="so_options[group][<?php echo $groupKey ?>][servers][<?php echo htmlentities2( $serverKey ); ?>][delete]" value="1" onclick="toggleIgnoreServer(<?php echo $serverKey ?>, <?php echo $groupKey ?>, this.checked);" /></th>
@@ -118,7 +148,7 @@
 						</td>
 					</tr>
 <?php
-			}
+		}
 ?>
 				</tbody>
 			</table>
@@ -128,7 +158,8 @@
 					<input type="submit" name="so_options[group][<?php echo $groupKey; ?>][addrowbutton]" value="<?php _e( 'Go', 'syndicate-out' ); ?>" class="button" />
 				</div>
 				<div class="alignleft actions">
-					<input type="submit" name="so_options[group][<?php echo $groupKey; ?>][deletegroup]" value="<?php _e( 'Delete group', 'syndicate-out' ); ?>" class="button delete" />
+					<input type="submit" name="so_options[deletegroup][<?php echo $groupKey; ?>]" value="<?php _e( 'Delete group', 'syndicate-out' ); ?>" class="button delete" />
+					<input type="submit" name="save" class="button-primary" value="<?php _e( 'Save group', 'syndicate-out' ) ?>" />
 				</div>
 				<div class="tablenav-pages one-page">
 					<span class="displaying-num">
@@ -139,13 +170,8 @@
 			
 		</div>
 <?php
-		}
+		//}
 	}
 ?>
-		<p class="submit">
-			<?php printf( __( 'Add %s new groups', 'syndicate-out' ), '<input type="text" size="3" value="1" name="so_options[addgroup]" />' ); ?>
-			<input type="submit" name="so_options[addgroupbutton]" value="Go" class="button" />
-			<input type="submit" name="save" class="button-primary" value="<?php _e( 'Save settings', 'syndicate-out' ) ?>" />
-		</p>
 	</form>
 </div>

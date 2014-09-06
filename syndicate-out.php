@@ -98,7 +98,6 @@ if ( is_admin() ) {
 			                                                                    'password' => '' ) ) );
 		}
 		$newServerRows = get_transient( 'so_new_servers' );
-		$newGroupRows = get_transient( 'so_new_groups' );
 
 		require_once( 'so-options.php' );
 
@@ -149,17 +148,25 @@ if ( is_admin() ) {
 	function syndicate_out_sanitize_options( $options ) {
 
 		if ( ! isset( $options['options_version'] ) ) {
+		
 	 // Delete any groups which have been flagged for deletion...
 			if ( isset( $options['deletegroup'] ) ) {
-				foreach ( $options['deletegroup'] AS $groupKey => $buttonValue ) {
-					if ( array_key_exists( $groupKey, $options ) ) {
-						unset( $options[$groupKey] );
+			
+				if ( $returnOptions = get_option( 'so_options' ) ) {
+					foreach ( $options['deletegroup'] AS $groupKey => $buttonValue ) {
+						if ( array_key_exists( $groupKey, $returnOptions['group'] ) ) {
+							unset( $returnOptions['group'][$groupKey] );
+						}
 					}
+				} else {
+					$returnOptions = array( 'options_version' => SO_OPTIONS_VERSION );
 				}
-				unset( $options['deletegroup'] );
+				
+				return $returnOptions;
+				
 			}
 		
-	 // Save all group settings...
+	 // Update any groups which have been changed...
 			$addRowsArray = array();
 			$newOptions = array( 'group' => array() );
 			if ( isset( $options['group'] ) && is_array( $options['group'] ) ) {
@@ -248,21 +255,18 @@ if ( is_admin() ) {
 			if ( count( $addRowsArray ) > 0 ) {
 				set_transient( 'so_new_servers', $addRowsArray, 5 );
 			}
-			
-	 // Set the transient relating to new groups...
-			if ( isset( $options['addgroupbutton'] ) && is_numeric( $options['addgroup'] ) && $options['addgroup'] > 0 ) {
-				set_transient( 'so_new_groups', $options['addgroup'], 5 );
-			}
 
-	 // Grab the old settings...
-			$oldOptions = get_option( 'so_options' );
-			if ( isset( $oldOptions['options_version'] ) ) {
-				$newOptions['options_version'] = $oldOptions['options_version'];
+	 // Merge old and new options to create final return...
+			if ( $returnOptions = get_option( 'so_options' ) ) {
+				foreach ($newOptions['group'] AS $groupKey => $newGroupOptions) {
+					$returnOptions['group'][$groupKey] = $newGroupOptions;
+				}
 			} else {
-				$newOptions['options_version'] = SO_OPTIONS_VERSION;
+				$returnOptions = $newOptions;
+				$returnOptions['options_version'] = SO_OPTIONS_VERSION;
 			}
 			
-			return $newOptions;
+			return $returnOptions;
 		} else {
 			return $options;
 		}
