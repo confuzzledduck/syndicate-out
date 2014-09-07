@@ -42,6 +42,7 @@ The post should immediately be cross-posted to the remote blog.
 * Added hooks for actions and filters to syndication process.
 * Added option to transmit all categories except for the syndication category. (Request by SpiritFly.)
 * Added tabs to settings page for each syndication group to help improve usability.
+* Improved status reporting on settings page.
 
 = 0.8.3 =
 * Efficiency improvements in syndication routine.
