@@ -229,15 +229,25 @@ if ( is_admin() ) {
 										$xmlrpc = new WP_HTTP_IXR_CLIENT( $serverDetails['server'].'xmlrpc.php' );
 										$xmlrpc->query( 'wp.getOptions', array( 0, $serverDetails['username'], $serverDetails['password'], array( 'software_name', 'software_version', 'so_api' ) ) );
 										$xmlrpcResponse = $xmlrpc->getResponse();
-										if ( '403' == $xmlrpcResponse['faultCode'] ) {
-											$newOptions['group'][$groupId]['servers'][$serverKey]['authenticated'] = false;
-											$newOptions['group'][$groupId]['servers'][$serverKey]['api'] = __( 'Unknown', 'syndicate-out' );
-										} else {
-											$newOptions['group'][$groupId]['servers'][$serverKey]['authenticated'] = true;
-											if ( isset( $xmlrpcResponse['so_api'] ) ) {
-												$newOptions['group'][$groupId]['servers'][$serverKey]['api'] = sprintf( __( 'Syndicate Out API v%s', 'syndicate-out' ), $xmlrpcResponse['so_api']['value'] );
+										if ( null == $xmlrpcResponse ) {
+											if ( -32300 == $xmlrpc->getErrorCode() ) {
+												$newOptions['group'][$groupId]['servers'][$serverKey]['authenticated'] = false;
+												$newOptions['group'][$groupId]['servers'][$serverKey]['api'] = __( 'API Unavailable', 'syndicate-out' );
 											} else {
-												$newOptions['group'][$groupId]['servers'][$serverKey]['api'] = $xmlrpcResponse['software_name']['value'].' '.$xmlrpcResponse['software_version']['value'];
+												$newOptions['group'][$groupId]['servers'][$serverKey]['authenticated'] = false;
+												$newOptions['group'][$groupId]['servers'][$serverKey]['api'] = __( 'Unknown', 'syndicate-out' );
+											}
+										} else {
+											if ( '403' == $xmlrpcResponse['faultCode'] ) {
+												$newOptions['group'][$groupId]['servers'][$serverKey]['authenticated'] = false;
+												$newOptions['group'][$groupId]['servers'][$serverKey]['api'] = __( 'Unknown', 'syndicate-out' );
+											} else {
+	         							$newOptions['group'][$groupId]['servers'][$serverKey]['authenticated'] = true;
+												if ( isset( $xmlrpcResponse['so_api'] ) ) {
+													$newOptions['group'][$groupId]['servers'][$serverKey]['api'] = sprintf( __( 'Syndicate Out API v%s', 'syndicate-out' ), $xmlrpcResponse['so_api']['value'] );
+												} else {
+													$newOptions['group'][$groupId]['servers'][$serverKey]['api'] = $xmlrpcResponse['software_name']['value'].' '.$xmlrpcResponse['software_version']['value'];
+												}
 											}
 										}
 									}

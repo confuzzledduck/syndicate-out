@@ -141,10 +141,11 @@
 						<td><input id="serverusername-<?php echo $serverKey ?>-<?php echo $groupKey ?>" type="text" name="so_options[group][<?php echo $groupKey ?>][servers][<?php echo htmlentities2( $serverKey ); ?>][username]" value="<?php echo htmlentities2( $soServer['username'] ); ?>" /></td>
 						<td><input id="serverpassword-<?php echo $serverKey ?>-<?php echo $groupKey ?>" type="password" name="so_options[group][<?php echo $groupKey ?>][servers][<?php echo htmlentities2( $serverKey ); ?>][password]" value="<?php echo htmlentities2( $soServer['password'] ); ?>" /></td>
 						<td>
-							<?php _e( 'Authentication', 'syndicate-out' ); ?>: <?php echo ( isset( $soServer['authenticated'] ) && ( true == $soServer['authenticated'] ) ) ? '<span style="color: #006505;">'.__( 'OK', 'syndicate-out' ).'</span>' : ( ( ! isset( $soServer['authenticated'] ) || ( null == $soServer['authenticated'] ) ) ? '<span style="color: #777777;">'.__( 'unknown', 'syndicate-out' ).'</span>' : '<span style="color: #BC0B0B;">'.__( 'failed', 'syndicate-out' ).'</span>' ); ?>.<br />
-							<?php _e( 'Remote API', 'syndicate-out' ); ?>: <span style="color: #006505;"><?php echo ( ! isset( $soServer['api'] ) || ( null == $soServer['api'] ) ) ? '<span style="color: #777777;">'.__( 'unknown', 'syndicate-out' ).'</span>' : htmlentities2( $soServer['api'] ); ?></span>.
+							<?php _e( 'Authentication', 'syndicate-out' ); ?>: <?php echo ( isset( $soServer['authenticated'] ) && ( true == $soServer['authenticated'] ) ) ? '<span style="color: #006505;">'.__( 'OK', 'syndicate-out' ).'</span>' : '<span style="color: #BC0B0B;">'.__( 'Failed', 'syndicate-out' ).'</span>'; ?>.<br />
+							<?php _e( 'Remote API', 'syndicate-out' ); ?>: <span style="color: <?php echo ( isset( $soServer['authenticated'] ) && ( true == $soServer['authenticated'] ) ) ? '#006505' : '#BC0B0B'; ?>;"><?php echo htmlentities2( $soServer['api'] ); ?></span>.
 						</td>
 					</tr>
+<!--<td>Authentication: <span style="color: #006505;">OK</span> <span style="color: #BC0B0B;">failed</span>.<br />Remote API: <span style="color: #D98500;">WordPress default</span>.</td>-->
 <?php
 		}
 ?>
