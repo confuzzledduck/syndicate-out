@@ -43,6 +43,7 @@ The post should immediately be cross-posted to the remote blog.
 * Added option to transmit all categories except for the syndication category. (Request by SpiritFly.)
 * Added tabs to settings page for each syndication group to help improve usability.
 * Improved status reporting on settings page.
+* Fixed bug meaning schedule dates weren't getting sent to remote blog correctly.
 
 = 0.8.3 =
 * Efficiency improvements in syndication routine.

@@ -334,7 +334,7 @@ if ( is_admin() ) {
 									} else {
 										$postMetaId = $postId;
 									}
-
+									
 	 // General post related stuff...
 									$syndicateElements = array( 'post_status', 'post_title', 'post_excerpt',
 									                            'post_content', 'post_format', 'post_password',
@@ -345,8 +345,14 @@ if ( is_admin() ) {
 										}
 									}
 									
+	 // Sort out scheduled dates, etc...
 									if ( isset( $remotePost['post_date_gmt'] ) ) {
 										$remotePost['post_date_gmt'] = new IXR_Date( strtotime( $remotePost['post_date_gmt'] ) );
+									}
+									if ( 'future' == $postData->post_status ) {
+										if ( $parentPostDate = get_post( $postData->post_parent )->post_date_gmt ) {
+											$remotePost['post_date_gmt'] = new IXR_Date( strtotime( $parentPostDate ) );
+										}
 									}
 
 	 // Custom fields...
