@@ -101,7 +101,7 @@
 					<tr valign="top">
 						<th scope="row"><?php _e( 'Transmit categories', 'syndicate-out' ); ?></th>
 						<td>
-							<select id="triggermethod-<?php echo $groupKey; ?>" name="so_options[group][<?php echo $groupKey ?>][syndicate_category]">
+							<select id="transmitcategories-<?php echo $groupKey; ?>" name="so_options[group][<?php echo $groupKey ?>][syndicate_category]">
 								<option value="none"<?php echo ( isset( $syndicationGroup['syndicate_category'] ) && ( 'none' == $syndicationGroup['syndicate_category'] ) ) ? ' selected="selected"' : ''; ?>><?php _e( 'No categories', 'syndicate-out' ); ?></option>
 								<option value="all"<?php echo ( isset( $syndicationGroup['syndicate_category'] ) && ( 'all' == $syndicationGroup['syndicate_category'] ) ) ? ' selected="selected"' : ''; ?>><?php _e( 'All post categories', 'syndicate-out' ); ?></option>
 								<option value="syndication"<?php echo ( isset( $syndicationGroup['syndicate_category'] ) && ( 'allbut' == $syndicationGroup['syndicate_category'] ) ) ? ' selected="selected"' : ''; ?>><?php _e( 'All except syndication category', 'syndicate-out' ); ?></option>
