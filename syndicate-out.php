@@ -366,6 +366,15 @@ if ( is_admin() ) {
 											}
 										}
 									}
+									
+	// Thumbnail...
+									if ( has_post_thumbnail( $postMetaId ) ) {
+										$postThumbnailPath = get_attached_file( get_post_thumbnail_id( $postMetaId ) );
+										$remotePostThumbnail = array( 'name' => basename( $postThumbnailPath ),
+										                              'type' => mime_content_type( $postThumbnailPath ),
+										                              'bits' => new IXR_Base64( file_get_contents( $postThumbnailPath ) ),
+										                              'overwrite' => true );
+									}
 						
 	 // Tags...
 									$remotePost['terms_names'] = array();
@@ -452,6 +461,16 @@ if ( is_admin() ) {
 														
 														$thisServerPost = syndicate_out_clean_for_remote( $soOptions['group'][$groupKey]['servers'][$serverKey]['server'], $soOptions['group'][$groupKey]['servers'][$serverKey]['username'], $soOptions['group'][$groupKey]['servers'][$serverKey]['password'], $compiledGroupPost );
 														$xmlrpc = new WP_HTTP_IXR_CLIENT( $soOptions['group'][$groupKey]['servers'][$serverKey]['server'].'xmlrpc.php' );
+														
+	 // Upload featured image, if there is one...
+														if ( isset( $remotePostThumbnail ) ) {
+															$xmlrpc->query( 'wp.uploadFile', 1, $soOptions['group'][$groupKey]['servers'][$serverKey]['username'], $soOptions['group'][$groupKey]['servers'][$serverKey]['password'], $remotePostThumbnail );
+															$uploadMediaResponse = $xmlrpc->getResponse();
+															if ( isset( $uploadMediaResponse['id'] ) ) {
+																$thisServerPost['post_thumbnail'] = $uploadMediaResponse['id'];
+															}
+														}
+														
 														$xmlrpc->query( 'wp.editPost', array( 0, $soOptions['group'][$groupKey]['servers'][$serverKey]['username'], $soOptions['group'][$groupKey]['servers'][$serverKey]['password'], $remotePostId, $thisServerPost ) );
 														
 	/**
@@ -483,6 +502,16 @@ if ( is_admin() ) {
 											
 												$thisServerPost = syndicate_out_clean_for_remote( $soOptions['group'][$groupKey]['servers'][$serverKey]['server'], $soOptions['group'][$groupKey]['servers'][$serverKey]['username'], $soOptions['group'][$groupKey]['servers'][$serverKey]['password'], $compiledGroupPost );
 												$xmlrpc = new WP_HTTP_IXR_CLIENT( $serverDetails['server'].'xmlrpc.php' );
+												
+	 // Upload featured image, if there is one...
+												if ( isset( $remotePostThumbnail ) ) {
+													$xmlrpc->query( 'wp.uploadFile', 1, $soOptions['group'][$groupKey]['servers'][$serverKey]['username'], $soOptions['group'][$groupKey]['servers'][$serverKey]['password'], $remotePostThumbnail );
+													$uploadMediaResponse = $xmlrpc->getResponse();
+													if ( isset( $uploadMediaResponse['id'] ) ) {
+														$thisServerPost['post_thumbnail'] = $uploadMediaResponse['id'];
+													}
+												}
+												
 												$xmlrpc->query( 'wp.newPost', array( 0, $serverDetails['username'], $serverDetails['password'], $thisServerPost ) );
 												$remotePostInformation['group'][$groupKey][$serverKey] = $xmlrpc->getResponse();
 												

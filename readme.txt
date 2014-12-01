@@ -38,6 +38,9 @@ The post should immediately be cross-posted to the remote blog.
 
 == Changelog ==
 
+= 0.8.5 ==
+* Added syndication of featured images (thanks to Jan at lwd.cz for the majority of this).
+
 = 0.8.4 =
 * Added hooks for actions and filters to syndication process.
 * Added option to transmit all categories except for the syndication category. (Request by SpiritFly.)
