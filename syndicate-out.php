@@ -207,6 +207,13 @@ if ( is_admin() ) {
 								$newOptions['group'][$groupId]['syndicate_category'] = 'none';
 							break;
 						}
+						
+	 // Featured images...
+						if ( $groupOptions['featured_image'] == 'false' ) {
+							$newOptions['group'][$groupId]['featured_image'] = false;
+						} else {
+							$newOptions['group'][$groupId]['featured_image'] = true;
+						}
 
 	 // Servers...
 						foreach ( $groupOptions['servers'] AS $serverKey => $serverDetails ) {
