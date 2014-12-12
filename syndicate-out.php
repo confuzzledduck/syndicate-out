@@ -403,12 +403,14 @@ if ( is_admin() ) {
 											} else if ( ( 'all' == $groupDetails['syndicate_category'] ) || ( 'allbut' == $groupDetails['syndicate_category'] ) || ( -1 == $syndicationGroup['category'] ) ) {
 												$categories = $_POST['post_category'];
 												$groupCategoryArray[$groupKey] = array();
-												foreach ( $categories AS $postCategory ) {
-													if ( 0 != $postCategory ) {
-														if ( ( $postCategory == $groupDetails['category'] ) && ( 'allbut' == $groupDetails['syndicate_category'] ) ) {
-															continue;
+												if (is_array($categories)) {
+													foreach ( $categories AS $postCategory ) {
+														if ( 0 != $postCategory ) {
+															if ( ( $postCategory == $groupDetails['category'] ) && ( 'allbut' == $groupDetails['syndicate_category'] ) ) {
+																continue;
+															}
+															$groupCategoryArray[$groupKey][] = get_cat_name( $postCategory );
 														}
-														$groupCategoryArray[$groupKey][] = get_cat_name( $postCategory );
 													}
 												}
 											}
