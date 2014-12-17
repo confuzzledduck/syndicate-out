@@ -481,6 +481,27 @@ if ( is_admin() ) {
 															}
 														}
 
+														if ( isset( $thisServerPost['custom_fields'] ) ) {
+															$xmlrpc->query( 'wp.getPost', array(
+																0,
+																$soOptions['group'][$groupKey]['servers'][$serverKey]['username'],
+																$soOptions['group'][$groupKey]['servers'][$serverKey]['password'],
+																$remotePostId, array('custom_fields')));
+															$oldPost = $xmlrpc->getResponse();
+
+															$customMetaIds = array();
+
+															foreach ( $oldPost['custom_fields'] as $oldCustomField ) {
+																$customMetaIds[ $oldCustomField['key'] ] = $oldCustomField['id'];
+															}
+
+															foreach ( $thisServerPost['custom_fields'] as &$customField ) {
+																if ( isset( $customMetaIds[ $customField['key'] ] ) ) {
+																	$customField['id'] = $customMetaIds[ $customField['key'] ];
+																}
+															}
+														}
+
 														$xmlrpc->query( 'wp.editPost', array( 0, $soOptions['group'][$groupKey]['servers'][$serverKey]['username'], $soOptions['group'][$groupKey]['servers'][$serverKey]['password'], $remotePostId, $thisServerPost ) );
 
 	/**
