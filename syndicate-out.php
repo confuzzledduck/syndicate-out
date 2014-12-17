@@ -484,9 +484,12 @@ if ( is_admin() ) {
 														if ( isset( $thisServerPost['custom_fields'] ) ) {
 															$xmlrpc->query( 'wp.getPost', array(
 																0,
-																$soOptions['group'][$groupKey]['servers'][$serverKey]['username'],
-																$soOptions['group'][$groupKey]['servers'][$serverKey]['password'],
-																$remotePostId, array('custom_fields')));
+																$soOptions['group'][ $groupKey ]['servers'][ $serverKey ]['username'],
+																$soOptions['group'][ $groupKey ]['servers'][ $serverKey ]['password'],
+																$remotePostId, array(
+																	'custom_fields',
+																),
+															));
 															$oldPost = $xmlrpc->getResponse();
 
 															$customMetaIds = array();
@@ -498,6 +501,8 @@ if ( is_admin() ) {
 															foreach ( $thisServerPost['custom_fields'] as &$customField ) {
 																if ( isset( $customMetaIds[ $customField['key'] ] ) ) {
 																	$customField['id'] = $customMetaIds[ $customField['key'] ];
+																} else {
+																	unset( $customField['id'] );
 																}
 															}
 														}
