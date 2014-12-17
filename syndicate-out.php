@@ -53,19 +53,19 @@ if ( is_admin() ) {
 	// Register the plugin activation and delete functions...
 	//register_activation_hook( __FILE__, 'syndicate_out_activate' );
 	//register_uninstall_hook( __FILE__, 'syndicate_out_delete' );
-	
+
  /* Admin section. */
- 
+
 	 // Plugin initialisation...
 	function syndicate_out_init() {
 
 		load_plugin_textdomain( 'syndicate-out', false, dirname( plugin_basename( __FILE__ ) ).'/lang/' );
-	
+
 	}
 
 	 // Admin menu...
 	function syndicate_out_menu() {
-	
+
 		add_submenu_page( 'options-general.php', 'Syndicate Out Settings', 'Syndication', 'manage_options', 'syndicate_out', 'syndicate_out_admin' );
 
 	}
@@ -82,14 +82,14 @@ if ( is_admin() ) {
 
 	 // Register valid admin options...
 	function syndicate_out_register_settings() {
-	
+
 		register_setting( 'syndicate-out-options', 'so_options', 'syndicate_out_sanitize_options' );
 
 	}
 
 	 // Admin page...
 	function syndicate_out_admin() {
-	
+
 		if ( false === ( $syndicateOutOptions = get_option( 'so_options' ) ) ) {
 			$syndicateOutOptions['group'][] = array( 'category' => null,
 			                                         'syndicate_category' => 'none',
@@ -102,7 +102,7 @@ if ( is_admin() ) {
 		require_once( 'so-options.php' );
 
 	}
-	
+
 	 // Meta box (only shows when one or more group has 'post' as the trigger...
 	function syndicate_out_meta_box( $post ) {
 
@@ -118,10 +118,10 @@ if ( is_admin() ) {
 		}
 
 	}
-	
+
 	 // Meta box content...
 	function syndicate_out_meta_box_content( $post, $metabox ) {
-	
+
 		if ( false !== ( $syndicateOutOptions = $metabox['args'] ) ) {
 			if ( isset( $syndicateOutOptions['group'] ) && is_array( $syndicateOutOptions['group'] ) ) {
 				$postSoMeta = get_post_meta( $post->ID, '_so_remote_posts', true );
@@ -143,15 +143,15 @@ if ( is_admin() ) {
 	}
 
  /* Post / action section. */
- 
+
 	 // Sanitize and organise the all settings...
 	function syndicate_out_sanitize_options( $options ) {
 
 		if ( ! isset( $options['options_version'] ) ) {
-		
+
 	 // Delete any groups which have been flagged for deletion...
 			if ( isset( $options['deletegroup'] ) ) {
-			
+
 				if ( $returnOptions = get_option( 'so_options' ) ) {
 					foreach ( $options['deletegroup'] AS $groupKey => $buttonValue ) {
 						if ( array_key_exists( $groupKey, $returnOptions['group'] ) ) {
@@ -161,20 +161,20 @@ if ( is_admin() ) {
 				} else {
 					$returnOptions = array( 'options_version' => SO_OPTIONS_VERSION );
 				}
-				
+
 				return $returnOptions;
-				
+
 			}
-		
+
 	 // Update any groups which have been changed...
 			$addRowsArray = array();
 			$newOptions = array( 'group' => array() );
 			if ( isset( $options['group'] ) && is_array( $options['group'] ) ) {
 				foreach ( $options['group'] AS $groupId => $groupOptions ) {
-				
+
 	 // If this group isn't flagged for deletion...
 					if ( ! isset( $groupOptions['deletegroup'] ) ) {
-				
+
 	 // Flag new rows, if required...
 						if ( isset( $groupOptions['addrowbutton'] ) && is_numeric( $groupOptions['addrow'] ) && $groupOptions['addrow'] > 0 ) {
 							$addRowsArray[$groupId] = $groupOptions['addrow'];
@@ -207,7 +207,7 @@ if ( is_admin() ) {
 								$newOptions['group'][$groupId]['syndicate_category'] = 'none';
 							break;
 						}
-						
+
 	 // Featured images...
 						if ( $groupOptions['featured_image'] == 'false' ) {
 							$newOptions['group'][$groupId]['featured_image'] = false;
@@ -218,7 +218,7 @@ if ( is_admin() ) {
 	 // Servers...
 						foreach ( $groupOptions['servers'] AS $serverKey => $serverDetails ) {
 							if ( ! empty( $serverDetails['server'] ) ) {
-							
+
 								$remoteServer = trim( $serverDetails['server'] );
 								if ( ( 'http://' != substr( $remoteServer, 0, 7 ) ) && ( 'https://' != substr( $remoteServer, 0, 8 ) ) ) {
 									$remoteServer = 'http://'.$remoteServer;
@@ -262,12 +262,12 @@ if ( is_admin() ) {
 
 							}
 						}
-					
+
 					}
-					
+
 				}
 			}
-			
+
 	 // Set the transient relating to new server rows...
 			if ( count( $addRowsArray ) > 0 ) {
 				set_transient( 'so_new_servers', $addRowsArray, 5 );
@@ -282,7 +282,7 @@ if ( is_admin() ) {
 				$returnOptions = $newOptions;
 				$returnOptions['options_version'] = SO_OPTIONS_VERSION;
 			}
-			
+
 			return $returnOptions;
 		} else {
 			return $options;
@@ -292,7 +292,7 @@ if ( is_admin() ) {
 
 	 // Carry out the syndication on post insert...
 	function syndicate_out_post( $postId ) {
-	
+
 		if ( wp_is_post_revision( $postId ) && ! wp_is_post_autosave( $postId ) ) {
 
 			if ( $soOptions = get_option( 'so_options' ) ) {
@@ -341,7 +341,7 @@ if ( is_admin() ) {
 									} else {
 										$postMetaId = $postId;
 									}
-									
+
 	 // General post related stuff...
 									$syndicateElements = array( 'post_status', 'post_title', 'post_excerpt',
 									                            'post_content', 'post_format', 'post_password',
@@ -351,7 +351,7 @@ if ( is_admin() ) {
 											$remotePost[$dataItemKey] = $dataItemContent;
 										}
 									}
-									
+
 	 // Sort out scheduled dates, etc...
 									if ( isset( $remotePost['post_date_gmt'] ) ) {
 										$remotePost['post_date_gmt'] = new IXR_Date( strtotime( $remotePost['post_date_gmt'] ) );
@@ -373,7 +373,7 @@ if ( is_admin() ) {
 											}
 										}
 									}
-									
+
 	// Thumbnail...
 									if ( has_post_thumbnail( $postMetaId ) ) {
 										$postThumbnailPath = get_attached_file( get_post_thumbnail_id( $postMetaId ) );
@@ -382,7 +382,7 @@ if ( is_admin() ) {
 										                              'bits' => new IXR_Base64( file_get_contents( $postThumbnailPath ) ),
 										                              'overwrite' => true );
 									}
-						
+
 	 // Tags...
 									$remotePost['terms_names'] = array();
 									if ( $postTags = syndicate_out_get_tags( $postId ) ) {
@@ -436,7 +436,7 @@ if ( is_admin() ) {
 	 * @param string $postId ID of post being syndicated.
 	 */
 									do_action( 'syndicate_post_before_all', $postId );
-									
+
 	 // Publish the post to the remote blog(s)...
 									if ( false !== ( $remotePostIds = unserialize( get_post_meta( $postMetaId, '_so_remote_posts', true ) ) ) ) {
 										if ( ! isset( $remotePostIds['options_version'] ) ) {
@@ -455,7 +455,7 @@ if ( is_admin() ) {
 											foreach ( $remoteServers AS $serverKey => $remotePostId ) {
 												if ( is_numeric( $remotePostId ) ) {
 													if ( isset( $soOptions['group'][$groupKey]['servers'][$serverKey] ) ) {
-													
+
 	/**
 	 * Fires before a post is syndicated to EACH destination. Fires for both
 	 * posts which will be updates and for posts which will be new posts on the
@@ -467,10 +467,10 @@ if ( is_admin() ) {
 	 * @param string $soOptions Hostname of the server being syndicated to.
 	 */
 														do_action( 'syndicate_post_before_server', $postId, $soOptions['group'][$groupKey]['servers'][$serverKey]['server'] );
-														
+
 														$thisServerPost = syndicate_out_clean_for_remote( $soOptions['group'][$groupKey]['servers'][$serverKey]['server'], $soOptions['group'][$groupKey]['servers'][$serverKey]['username'], $soOptions['group'][$groupKey]['servers'][$serverKey]['password'], $compiledGroupPost );
 														$xmlrpc = new WP_HTTP_IXR_CLIENT( $soOptions['group'][$groupKey]['servers'][$serverKey]['server'].'xmlrpc.php' );
-														
+
 														if ( !isset( $soOptions['group'][$groupKey]['featured_image'] ) || ( true == $soOptions['group'][$groupKey]['featured_image'] ) ) {
 															if ( isset( $remotePostThumbnail ) ) {
 																$xmlrpc->query( 'wp.uploadFile', 1, $soOptions['group'][$groupKey]['servers'][$serverKey]['username'], $soOptions['group'][$groupKey]['servers'][$serverKey]['password'], $remotePostThumbnail );
@@ -480,9 +480,9 @@ if ( is_admin() ) {
 																}
 															}
 														}
-														
+
 														$xmlrpc->query( 'wp.editPost', array( 0, $soOptions['group'][$groupKey]['servers'][$serverKey]['username'], $soOptions['group'][$groupKey]['servers'][$serverKey]['password'], $remotePostId, $thisServerPost ) );
-														
+
 	/**
 	 * Fires after a post is syndicated to EACH destination. Fires for both
 	 * posts which will be updates and for posts which will be new posts on the
@@ -494,7 +494,7 @@ if ( is_admin() ) {
 	 * @param string $soOptions Hostname of the server being syndicated to.
 	 */
 														do_action( 'syndicate_post_after_server', $postId, $soOptions['group'][$groupKey]['servers'][$serverKey]['server'] );
-														
+
 													}
 												}
 											}
@@ -507,12 +507,12 @@ if ( is_admin() ) {
 												$compiledGroupPost['terms_names']['category'] = $groupCategoryArray[$groupKey];
 											}
 											foreach ( $activeGroup['servers'] AS $serverKey => $serverDetails ) {
-											
+
 												do_action( 'syndicate_post_before_server', $postId, $serverDetails['server'] );
-											
+
 												$thisServerPost = syndicate_out_clean_for_remote( $soOptions['group'][$groupKey]['servers'][$serverKey]['server'], $soOptions['group'][$groupKey]['servers'][$serverKey]['username'], $soOptions['group'][$groupKey]['servers'][$serverKey]['password'], $compiledGroupPost );
 												$xmlrpc = new WP_HTTP_IXR_CLIENT( $serverDetails['server'].'xmlrpc.php' );
-												
+
 												if ( !isset( $soOptions['group'][$groupKey]['featured_image'] ) || ( true == $soOptions['group'][$groupKey]['featured_image'] ) ) {
 													if ( isset( $remotePostThumbnail ) ) {
 														$xmlrpc->query( 'wp.uploadFile', 1, $soOptions['group'][$groupKey]['servers'][$serverKey]['username'], $soOptions['group'][$groupKey]['servers'][$serverKey]['password'], $remotePostThumbnail );
@@ -522,17 +522,17 @@ if ( is_admin() ) {
 														}
 													}
 												}
-												
+
 												$xmlrpc->query( 'wp.newPost', array( 0, $serverDetails['username'], $serverDetails['password'], $thisServerPost ) );
 												$remotePostInformation['group'][$groupKey][$serverKey] = $xmlrpc->getResponse();
-												
+
 												do_action( 'syndicate_post_after_server', $postId, $serverDetails['server'] );
-												
+
 											}
 										}
 										update_post_meta( $postMetaId, '_so_remote_posts', serialize( $remotePostInformation ) );
 									}
-									
+
 	/**
 	 * Fires after a post is syndicated to ALL destinations.
 	 *
@@ -551,11 +551,11 @@ if ( is_admin() ) {
 
 				}
 			}
-		
+
 		}
 
 	}
-	
+
 	 // Returns a valid post type for the given post. Either simply the post type
 	 // speficied in the post (if it's not a revision), or the parent post type...
 	function syndicate_out_get_post_type( $postData ) {
@@ -570,9 +570,9 @@ if ( is_admin() ) {
 		} else {
 			return $postData->post_type;
 		}
-	
+
 	}
-	
+
 	 // Check the post is valid for (will be accepted by) the remote server
 	 // specified, and if not strip out anything which might cause problems...
 	function syndicate_out_clean_for_remote( $remoteAddress, $remoteUsername, $remotePassword, $compiledGroupPost ) {
@@ -582,7 +582,7 @@ if ( is_admin() ) {
 		}
 
 		return $compiledGroupPost;
-	
+
 	}
 
 	 // Get a list of tags for this post...
