@@ -31,6 +31,8 @@
 			<?php _e( 'Posts which match multiple groups with duplicate servers will only be syndicated to the remote blog once but will use the least restrictive \'transmit categories\' setting.', 'syndicate-out' ); ?>
 			<?php _e( 'There is no limit to the number of groups which may be added.', 'syndicate-out' ); ?>
 		</p>
+		
+		<?php var_dump($syndicateOutOptions); ?>
 
 <?php
 	if ( isset( $syndicateOutOptions['group'] ) && is_array( $syndicateOutOptions['group'] ) ) {
@@ -113,8 +115,8 @@
 						<th scope="row"><?php _e( 'Featured images', 'syndicate-out' ); ?></th>
 						<td>
 							<select id="featuredimages-<?php echo $groupKey; ?>" name="so_options[group][<?php echo $groupKey ?>][featured_image]">
-								<option value="true"<?php echo ( isset( $syndicationGroup['featured_image'] ) && ( 'true' == $syndicationGroup['featured_image'] ) ) ? ' selected="selected"' : ''; ?>><?php _e( 'Transmit featured images', 'syndicate-out' ); ?></option>
-								<option value="false"<?php echo ( isset( $syndicationGroup['featured_image'] ) && ( 'false' == $syndicationGroup['featured_image'] ) ) ? ' selected="selected"' : ''; ?>><?php _e( 'Do not transmit featured images', 'syndicate-out' ); ?></option>
+								<option value="true"<?php echo ( isset( $syndicationGroup['featured_image'] ) && ( true == $syndicationGroup['featured_image'] ) ) ? ' selected="selected"' : ''; ?>><?php _e( 'Transmit featured images', 'syndicate-out' ); ?></option>
+								<option value="false"<?php echo ( isset( $syndicationGroup['featured_image'] ) && ( false == $syndicationGroup['featured_image'] ) ) ? ' selected="selected"' : ''; ?>><?php _e( 'Do not transmit featured images', 'syndicate-out' ); ?></option>
 							</select>
 						</td>
 					</tr>
