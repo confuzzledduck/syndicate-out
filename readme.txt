@@ -39,6 +39,7 @@ The post should immediately be cross-posted to the remote blog.
 == Changelog ==
 
 = 0.8.5 ==
+* Bug fix to prevent old custom meta data being transmitted (thanks to Martin Burchell and Aptivate).
 * Added syndication of featured images (thanks to Jan at lwd.cz for the majority of this).
 
 = 0.8.4 =
