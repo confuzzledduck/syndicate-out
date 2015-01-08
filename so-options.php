@@ -31,8 +31,6 @@
 			<?php _e( 'Posts which match multiple groups with duplicate servers will only be syndicated to the remote blog once but will use the least restrictive \'transmit categories\' setting.', 'syndicate-out' ); ?>
 			<?php _e( 'There is no limit to the number of groups which may be added.', 'syndicate-out' ); ?>
 		</p>
-		
-		<?php var_dump($syndicateOutOptions); ?>
 
 <?php
 	if ( isset( $syndicateOutOptions['group'] ) && is_array( $syndicateOutOptions['group'] ) ) {

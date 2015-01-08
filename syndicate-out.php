@@ -4,7 +4,7 @@
 
 	Plugin Name: Syndicate Out
 	Plugin URI: http://www.flutt.co.uk/development/wordpress-plugins/syndicate-out/
-	Version: 0.8.5
+	Version: 0.9
 	Text Domain: syndicate-out
 	Domain Path: /lang
 	Description: Syndicates posts made in any specified category to another WP blog using WordPress' built in XML-RPC functionality.
@@ -17,7 +17,7 @@
 #  syndicate-out.php
 #
 #  Created by Jonathon Wardman on 09-07-2009.
-#  Copyright 2009 - 2014, Jonathon Wardman. All rights reserved.
+#  Copyright 2009 - 2015, Jonathon Wardman. All rights reserved.
 #
 #  This program is free software: you can redistribute it and/or modify
 #  it under the terms of the GNU General Public License as published by
