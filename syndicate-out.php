@@ -233,7 +233,7 @@ if ( is_admin() ) {
 	 // Authentication and API version...
 								if ( include_once(  ABSPATH . WPINC . '/class-IXR.php' ) ) {
 									if ( include_once(  ABSPATH . WPINC . '/class-wp-http-ixr-client.php' ) ) {
-										$xmlrpc = new WP_HTTP_IXR_CLIENT( $serverDetails['server'].'xmlrpc.php' );
+										$xmlrpc = new WP_HTTP_IXR_CLIENT( $remoteServer.'xmlrpc.php' );
 										$xmlrpc->query( 'wp.getOptions', array( 0, $serverDetails['username'], $serverDetails['password'], array( 'software_name', 'software_version', 'so_api' ) ) );
 										$xmlrpcResponse = $xmlrpc->getResponse();
 										if ( null == $xmlrpcResponse ) {
