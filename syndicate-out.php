@@ -245,9 +245,9 @@ if ( is_admin() ) {
 												$newOptions['group'][$groupId]['servers'][$serverKey]['api'] = __( 'Unknown', 'syndicate-out' );
 											}
 										} else {
-											if ( '403' == $xmlrpcResponse['faultCode'] ) {
+											if ( isset( $xmlrpcResponse['faultString'] ) ) {
 												$newOptions['group'][$groupId]['servers'][$serverKey]['authenticated'] = false;
-												$newOptions['group'][$groupId]['servers'][$serverKey]['api'] = __( 'Unknown', 'syndicate-out' );
+												$newOptions['group'][$groupId]['servers'][$serverKey]['api'] = __( trim( $xmlrpcResponse['faultString'], ' .' ), 'syndicate-out' );
 											} else {
 	         							$newOptions['group'][$groupId]['servers'][$serverKey]['authenticated'] = true;
 												if ( isset( $xmlrpcResponse['so_api'] ) ) {
