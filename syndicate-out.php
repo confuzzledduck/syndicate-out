@@ -376,9 +376,10 @@ if ( is_admin() ) {
 
 	// Thumbnail...
 									if ( has_post_thumbnail( $postMetaId ) ) {
-										$postThumbnailPath = get_attached_file( get_post_thumbnail_id( $postMetaId ) );
+										$thumbnailId = get_post_thumbnail_id( $postMetaId );
+										$postThumbnailPath = get_attached_file( $thumbnailId );
 										$remotePostThumbnail = array( 'name' => basename( $postThumbnailPath ),
-										                              'type' => mime_content_type( $postThumbnailPath ),
+										                              'type' => get_post_mime_type( $thumbnailId ),
 										                              'bits' => new IXR_Base64( file_get_contents( $postThumbnailPath ) ),
 										                              'overwrite' => true );
 									}
