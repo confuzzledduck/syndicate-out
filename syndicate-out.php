@@ -48,6 +48,7 @@ if ( is_admin() ) {
 	add_action( 'add_meta_boxes_post', 'syndicate_out_meta_box' );
 	add_action( 'admin_init', 'syndicate_out_register_settings' );
 	add_action( 'save_post', 'syndicate_out_post' );
+	add_action( 'before_delete_post', 'syndicate_out_post_delete' );
 	add_filter( 'plugin_action_links', 'syndicate_out_settings_link', 10, 2 );
 
 	// Register the plugin activation and delete functions...
@@ -581,6 +582,17 @@ if ( is_admin() ) {
 
 		}
 
+	}
+	
+	 // Checks to see if a post should be deleted remotely when the local copy of
+	 // the post is deleted...
+	function syndicate_out_post_delete( $postId ) {
+	
+		if ( !empty( $remotePostData = get_post_meta($postId, '_so_remote_posts', true) ) ) {
+			$remotePostData = unserialize( $remotePostData );
+		}
+		
+		
 	}
 
 	 // Returns a valid post type for the given post. Either simply the post type
