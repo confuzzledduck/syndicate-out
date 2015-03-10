@@ -588,7 +588,8 @@ if ( is_admin() ) {
 	 // the post is deleted...
 	function syndicate_out_post_delete( $postId ) {
 	
-		if ( !empty( $remotePostData = get_post_meta($postId, '_so_remote_posts', true) ) ) {
+		$remotePostData = get_post_meta( $postId, '_so_remote_posts', true );
+		if ( !empty( $remotePostData ) ) {
 			$remotePostData = unserialize( $remotePostData );
 		}
 		
