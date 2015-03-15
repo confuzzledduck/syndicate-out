@@ -45,7 +45,6 @@ if ( is_admin() ) {
 	 // Register functions...
 	add_action( 'plugins_loaded', 'syndicate_out_init' );
 	add_action( 'admin_menu', 'syndicate_out_menu' );
-	add_action( 'add_meta_boxes_post', 'syndicate_out_meta_box' );
 	add_action( 'admin_init', 'syndicate_out_register_settings' );
 	add_action( 'save_post', 'syndicate_out_post' );
 	add_action( 'before_delete_post', 'syndicate_out_post_delete' );
@@ -64,10 +63,21 @@ if ( is_admin() ) {
 
 	}
 
+	function syndicate_out_add_meta_box_actions() {
+		$post_types = array( 'post' );
+
+		$post_types = apply_filters( 'syndicate_out_post_types', $post_types );
+
+		foreach ( $post_types as $post_type ) {
+			add_action( "add_meta_boxes_$post_type", 'syndicate_out_meta_box' );
+		}
+	}
+
 	 // Admin menu...
 	function syndicate_out_menu() {
 
 		add_submenu_page( 'options-general.php', 'Syndicate Out Settings', 'Syndication', 'manage_options', 'syndicate_out', 'syndicate_out_admin' );
+		syndicate_out_add_meta_box_actions();
 
 	}
 
@@ -109,9 +119,10 @@ if ( is_admin() ) {
 
 		if ( false !== ( $syndicateOutOptions = get_option( 'so_options' ) ) ) {
 			if ( isset( $syndicateOutOptions['group'] ) && is_array( $syndicateOutOptions['group'] ) ) {
+				$post_type = syndicate_out_get_post_type( $post );
 				foreach ( $syndicateOutOptions['group'] AS $syndicationGroup) {
 					if ( -2 == $syndicationGroup['category'] ) {
-						add_meta_box( 'syndicateoutdiv', __( 'Syndicate Post', 'syndicate-out' ), 'syndicate_out_meta_box_content', 'post', 'side', 'default', $syndicateOutOptions );
+						add_meta_box( 'syndicateoutdiv', __( 'Syndicate Post', 'syndicate-out' ), 'syndicate_out_meta_box_content', $post_type, 'side', 'default', $syndicateOutOptions );
 						break;
 					}
 				}
