@@ -40,7 +40,8 @@ The post should immediately be cross-posted to the remote blog.
 
 = 0.9 ==
 * Added syndication of featured images (díky Jan at lwd.cz for the majority of this).
-* Bug fix to prevent old custom meta data being transmitted (thanks to Martin Burchell and Aptivate).
+* Added syndication of custom post types & new filter 'syndicate_out_post_types' (thanks Martin Burchell and Aptivate).
+* Bug fix to prevent old custom meta data being transmitted (thanks again to Martin Burchell and Aptivate).
 * Fix for API authentication failure when corrections are needed to remote site URL (thanks Brandon).
 * Made some improvements to error reporting when API authentication fails.
 

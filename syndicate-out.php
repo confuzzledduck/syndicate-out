@@ -63,14 +63,23 @@ if ( is_admin() ) {
 
 	}
 
+	 // Set up meta box actions...
 	function syndicate_out_add_meta_box_actions() {
-		$post_types = array( 'post' );
 
-		$post_types = apply_filters( 'syndicate_out_post_types', $post_types );
-
-		foreach ( $post_types as $post_type ) {
-			add_action( "add_meta_boxes_$post_type", 'syndicate_out_meta_box' );
+		$postTypes = array( 'post' );
+		
+	/**
+	 * Filter the post types for which a syndication box will be shown.
+	 *
+	 * @since 0.9
+	 *
+	 * @param array $postTypes The types of post which will display a syndication box.
+	 */
+		$postTypes = apply_filters( 'syndicate_out_post_types', $postTypes );
+		foreach ( $postTypes AS $postType ) {
+			add_action( 'add_meta_boxes_'.$postType, 'syndicate_out_meta_box' );
 		}
+
 	}
 
 	 // Admin menu...
@@ -119,10 +128,10 @@ if ( is_admin() ) {
 
 		if ( false !== ( $syndicateOutOptions = get_option( 'so_options' ) ) ) {
 			if ( isset( $syndicateOutOptions['group'] ) && is_array( $syndicateOutOptions['group'] ) ) {
-				$post_type = syndicate_out_get_post_type( $post );
+				$postType = syndicate_out_get_post_type( $post );
 				foreach ( $syndicateOutOptions['group'] AS $syndicationGroup) {
 					if ( -2 == $syndicationGroup['category'] ) {
-						add_meta_box( 'syndicateoutdiv', __( 'Syndicate Post', 'syndicate-out' ), 'syndicate_out_meta_box_content', $post_type, 'side', 'default', $syndicateOutOptions );
+						add_meta_box( 'syndicateoutdiv', __( 'Syndicate Post', 'syndicate-out' ), 'syndicate_out_meta_box_content', $postType, 'side', 'default', $syndicateOutOptions );
 						break;
 					}
 				}
