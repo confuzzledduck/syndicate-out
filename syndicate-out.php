@@ -111,7 +111,8 @@ if ( is_admin() ) {
 	function syndicate_out_admin() {
 
 		if ( false === ( $syndicateOutOptions = get_option( 'so_options' ) ) ) {
-			$syndicateOutOptions['group'][] = array( 'category' => null,
+			$syndicateOutOptions['group'][] = array( 'name' => null,
+			                                         'category' => null,
 			                                         'syndicate_category' => 'none',
 			                                         'servers' => array( array( 'server' => '',
 			                                                                    'username' => '',
@@ -152,7 +153,8 @@ if ( is_admin() ) {
 				}
 				foreach ( $syndicateOutOptions['group'] AS $syndicationGroupKey => $syndicationGroup) {
 					if ( -2 == $syndicationGroup['category'] ) {
-						echo '<input type="checkbox" name="so_syndicate[group]['.htmlentities2( $syndicationGroupKey ).']" value="1"'.( ( isset( $syndicatedGroups[$syndicationGroupKey] ) && ( count( $syndicatedGroups[$syndicationGroupKey] ) ) > 0 ) ? ' checked="checked"' : '' ).' /><span style="font-weight: bold;">'.esc_html( sprintf( __( 'Syndication Group %s', 'syndicate-out' ), number_format_i18n( ( $syndicationGroupKey + 1 ) ) ) ).'</span><br />'.PHP_EOL;
+						$groupName = ( ! empty( $syndicationGroup['name'] ) ) ? htmlentities2( $syndicationGroup['name'] ) : sprintf( __( 'Syndication Group %s', 'syndicate-out' ), number_format_i18n( ( $syndicationGroupKey + 1 ) ) );
+						echo '<input type="checkbox" name="so_syndicate[group]['.htmlentities2( $syndicationGroupKey ).']" value="1"'.( ( isset( $syndicatedGroups[$syndicationGroupKey] ) && ( count( $syndicatedGroups[$syndicationGroupKey] ) ) > 0 ) ? ' checked="checked"' : '' ).' /><span style="font-weight: bold;">'.esc_html( $groupName ).'</span><br />'.PHP_EOL;
 						foreach ( $syndicationGroup['servers'] AS $syndicationGroupServerKey => $syndicationGroupServer ) {
 							echo '<span style="margin-left: 21px;">'.esc_html( $syndicationGroupServer['server'] ).'</span><br />'.PHP_EOL;
 						}
@@ -201,6 +203,11 @@ if ( is_admin() ) {
 							$addRowsArray[$groupId] = $groupOptions['addrow'];
 						}
 
+	 // Group name...
+						if ( ! empty( $groupOptions['name'] ) ) {
+							$newOptions['group'][$groupId]['name'] = $groupOptions['name'];
+						}
+						
 	 // Triggers and trigger category...
 						switch ( $groupOptions['trigger'] ) {
 							case 'all':

@@ -51,8 +51,13 @@
 <?php
 		if ( count( $syndicateOutOptions['group'] ) > 0 ) {
 			foreach ( $syndicateOutOptions['group'] AS $groupKey => $syndicationGroup ) {
+				if ( isset( $syndicationGroup['name'] ) && ( null != $syndicationGroup['name'] ) ) {
+					$groupName = htmlentities2( $syndicationGroup['name'] );
+				} else {
+					$groupName = sprintf( __( 'Syndication Group %s', 'syndicate-out' ), number_format_i18n( ( $groupKey + 1 ) ) );
+				}
 ?>
-			<a href="?page=syndicate_out&tab=<?php echo $groupKey; ?>" class="nav-tab <?php echo ( $activeTab == $groupKey ) ? 'nav-tab-active' : ''; ?>"><?php printf( __( 'Syndication Group %s', 'syndicate-out' ), number_format_i18n( ( $groupKey + 1 ) ) ); ?></a>
+			<a href="?page=syndicate_out&tab=<?php echo $groupKey; ?>" class="nav-tab <?php echo ( $activeTab == $groupKey ) ? 'nav-tab-active' : ''; ?>"><?php echo $groupName; ?></a>
 <?php
 			}
 		} else {
@@ -79,6 +84,9 @@
 			
 			<table class="form-table">
 				<tbody>
+					<tr>
+					   <th scope="row"><?php _e( 'Group Name', 'syndicate-out' ); ?></th>
+						 <td><input id="groupname-<?php echo $groupKey; ?>" style="width: 260px;" type="text" name="so_options[group][<?php echo $groupKey ?>][name]" value="<?php echo $groupName; ?>" /></tr>
 					<tr>
 					   <th scope="row"><?php _e( 'Syndicate', 'syndicate-out' ); ?></th>
 					   <td>

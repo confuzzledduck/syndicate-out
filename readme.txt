@@ -44,6 +44,7 @@ The post should immediately be cross-posted to the remote blog.
 * Bug fix to prevent old custom meta data being transmitted (thanks again to Martin Burchell and Aptivate).
 * Fix for API authentication failure when corrections are needed to remote site URL (thanks Brandon).
 * Made some improvements to error reporting when API authentication fails.
+* Added ability to rename syndication groups for greater clarity.
 
 = 0.8.4 =
 * Added hooks for actions and filters to syndication process.
