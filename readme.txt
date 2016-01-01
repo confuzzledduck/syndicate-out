@@ -45,6 +45,7 @@ The post should immediately be cross-posted to the remote blog.
 * Fix for API authentication failure when corrections are needed to remote site URL (thanks Brandon).
 * Made some improvements to error reporting when API authentication fails.
 * Added ability to rename syndication groups for greater clarity.
+* Squelch error in new post page for groups with no servers.
 
 = 0.8.4 =
 * Added hooks for actions and filters to syndication process.

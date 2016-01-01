@@ -17,7 +17,7 @@
 #  syndicate-out.php
 #
 #  Created by Jonathon Wardman on 09-07-2009.
-#  Copyright 2009 - 2015, Jonathon Wardman. All rights reserved.
+#  Copyright 2009 - 2016, Jonathon Wardman. All rights reserved.
 #
 #  This program is free software: you can redistribute it and/or modify
 #  it under the terms of the GNU General Public License as published by
@@ -155,8 +155,10 @@ if ( is_admin() ) {
 					if ( -2 == $syndicationGroup['category'] ) {
 						$groupName = ( ! empty( $syndicationGroup['name'] ) ) ? htmlentities2( $syndicationGroup['name'] ) : sprintf( __( 'Syndication Group %s', 'syndicate-out' ), number_format_i18n( ( $syndicationGroupKey + 1 ) ) );
 						echo '<input type="checkbox" name="so_syndicate[group]['.htmlentities2( $syndicationGroupKey ).']" value="1"'.( ( isset( $syndicatedGroups[$syndicationGroupKey] ) && ( count( $syndicatedGroups[$syndicationGroupKey] ) ) > 0 ) ? ' checked="checked"' : '' ).' /><span style="font-weight: bold;">'.esc_html( $groupName ).'</span><br />'.PHP_EOL;
-						foreach ( $syndicationGroup['servers'] AS $syndicationGroupServerKey => $syndicationGroupServer ) {
-							echo '<span style="margin-left: 21px;">'.esc_html( $syndicationGroupServer['server'] ).'</span><br />'.PHP_EOL;
+						if ( is_array( $syndicationGroup['servers' ] ) ) {
+							foreach ( $syndicationGroup['servers'] AS $syndicationGroupServerKey => $syndicationGroupServer ) {
+								echo '<span style="margin-left: 21px;">'.esc_html( $syndicationGroupServer['server'] ).'</span><br />'.PHP_EOL;
+							}
 						}
 					}
 				}
