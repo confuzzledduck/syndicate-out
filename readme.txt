@@ -46,6 +46,7 @@ The post should immediately be cross-posted to the remote blog.
 * Made some improvements to error reporting when API authentication fails.
 * Added ability to rename syndication groups for greater clarity.
 * Squelch error in new post page for groups with no servers.
+* Made improvements to custom meta transmission to hopefully improve syndication of SEO etc. data.
 
 = 0.8.4 =
 * Added hooks for actions and filters to syndication process.

@@ -368,6 +368,7 @@ if ( is_admin() ) {
 									if ( 'inherit' == $postData->post_status ) {
 										$postMetaId = $postData->post_parent;
 										$postData->post_status = get_post_status( $postMetaId );
+// Get the parent post date, rather than the updated post date.
 									} else {
 										$postMetaId = $postId;
 									}
@@ -395,9 +396,11 @@ if ( is_admin() ) {
 	 // Custom fields...
 									$postMeta = has_meta( $postMetaId );
 									if ( is_array( $postMeta ) ) {
+										$excludeMeta = array( '_edit_last', '_edit_lock',
+										                      '_thumbnail_id', '_so_remote_posts' );
 										$remotePost['custom_fields'] = array();
 										foreach ( $postMeta AS $metaSingle ) {
-											if ( $metaSingle['meta_key'][0] != '_' ) {
+											if ( ! in_array( $metaSingle['meta_key'], $excludeMeta ) ) {
 												$remotePost['custom_fields'][] = array( 'key' => $metaSingle['meta_key'],
 												                                        'value' => $metaSingle['meta_value'] );
 											}
@@ -537,7 +540,6 @@ if ( is_admin() ) {
 																}
 															}
 														}
-
 														$xmlrpc->query( 'wp.editPost', array( 0, $soOptions['group'][$groupKey]['servers'][$serverKey]['username'], $soOptions['group'][$groupKey]['servers'][$serverKey]['password'], $remotePostId, $thisServerPost ) );
 
 	/**
