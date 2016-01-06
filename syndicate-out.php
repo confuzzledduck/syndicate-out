@@ -368,7 +368,6 @@ if ( is_admin() ) {
 									if ( 'inherit' == $postData->post_status ) {
 										$postMetaId = $postData->post_parent;
 										$postData->post_status = get_post_status( $postMetaId );
-// Get the parent post date, rather than the updated post date.
 									} else {
 										$postMetaId = $postId;
 									}

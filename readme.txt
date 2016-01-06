@@ -3,7 +3,7 @@ Contributors: ConfuzzledDuck
 Tags: syndication, xmlrpc, cross-post, post, content, autoblogging, duplicate
 Requires at least: 3.4
 Tested up to: 4.4
-Stable tag: 0.8.4
+Stable tag: 0.9
 
 Syndicates posts made in any specified category to another WP blog using WordPress' built in XML-RPC functionality.
 
