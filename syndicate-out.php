@@ -418,7 +418,7 @@ if ( is_admin() ) {
 
 	 // Tags...
 									$remotePost['terms_names'] = array();
-									if ( $postTags = syndicate_out_get_tags( $postId ) ) {
+									if ( $postTags = syndicate_out_get_tags( $postMetaId ) ) {
 										$remotePost['terms_names']['post_tag'] = array();
 										foreach ( $postTags AS $postTag ) {
 											$remotePost['terms_names']['post_tag'][] = $postTag->name;
