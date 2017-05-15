@@ -4,7 +4,7 @@
 
 	Plugin Name: Syndicate Out
 	Plugin URI: http://www.flutt.co.uk/development/wordpress-plugins/syndicate-out/
-	Version: 0.9
+	Version: 0.10
 	Text Domain: syndicate-out
 	Domain Path: /lang
 	Description: Syndicates posts made in any specified category to another WP blog using WordPress' built in XML-RPC functionality.
@@ -245,6 +245,13 @@ if ( is_admin() ) {
 							$newOptions['group'][$groupId]['featured_image'] = true;
 						}
 
+	 // Deleted posts...
+						if ( $groupOptions['deleted_posts'] == 'false' ) {
+							$newOptions['group'][$groupId]['deleted_posts'] = false;
+						} else {
+							$newOptions['group'][$groupId]['deleted_posts'] = true;
+						}
+						
 	 // Servers...
 						foreach ( $groupOptions['servers'] AS $serverKey => $serverDetails ) {
 							if ( ! empty( $serverDetails['server'] ) ) {

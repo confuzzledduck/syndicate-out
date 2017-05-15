@@ -126,6 +126,15 @@
 							</select>
 						</td>
 					</tr>
+					<tr valign="top">
+						<th scope="row"><?php _e( 'Deleted posts', 'syndicate-out' ); ?></th>
+						<td>
+							<select id="deletedposts-<?php echo $groupKey; ?>" name="so_options[group][<?php echo $groupKey ?>][deleted_posts]">
+								<option value="true"<?php echo ( isset( $syndicationGroup['deleted_posts'] ) && ( true == $syndicationGroup['deleted_posts'] ) ) ? ' selected="selected"' : ''; ?>><?php _e( 'Delete from remote', 'syndicate-out' ); ?></option>
+								<option value="false"<?php echo ( isset( $syndicationGroup['deleted_posts'] ) && ( false == $syndicationGroup['deleted_posts'] ) ) ? ' selected="selected"' : ''; ?>><?php _e( 'Do not delete from remote', 'syndicate-out' ); ?></option>
+							</select>
+						</td>
+					</tr>
 				</tbody>
 			</table>
 			
