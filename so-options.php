@@ -86,6 +86,7 @@
 				<tbody>
 					<tr>
 					   <th scope="row"><?php _e( 'Group Name', 'syndicate-out' ); ?></th>
+						 <td><input id="groupname-<?php echo $groupKey; ?>" style="width: 260px;" type="text" name="so_options[group][<?php echo $groupKey ?>][name]" value="<?php echo htmlentities2( $syndicationGroup['name'] ); ?>" /></tr>
 					<tr>
 					   <th scope="row"><?php _e( 'Syndicate', 'syndicate-out' ); ?></th>
 					   <td>
