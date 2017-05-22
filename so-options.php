@@ -17,8 +17,10 @@
 	function toggleTriggerCategory(groupid, triggervalue) {
 		if (triggervalue == 'category') {
 			document.getElementById('triggercategory-' + groupid).disabled = false;
+			document.getElementById('transmitcategories-syndication-' + groupid).disabled = false;
 		} else {
 			document.getElementById('triggercategory-' + groupid).disabled = true;
+			document.getElementById('transmitcategories-syndication-' + groupid).disabled = true;
 		}
 	}
 </script>
@@ -88,10 +90,10 @@
 					   <th scope="row"><?php _e( 'Group Name', 'syndicate-out' ); ?></th>
 						 <td><input id="groupname-<?php echo $groupKey; ?>" style="width: 260px;" type="text" name="so_options[group][<?php echo $groupKey ?>][name]" value="<?php echo htmlentities2( $syndicationGroup['name'] ); ?>" /></tr>
 					<tr>
-					   <th scope="row"><?php _e( 'Syndicate', 'syndicate-out' ); ?></th>
+					   <th scope="row"><?php _e( 'Trigger', 'syndicate-out' ); ?></th>
 					   <td>
 							<select id="triggermethod-<?php echo $groupKey; ?>" name="so_options[group][<?php echo $groupKey ?>][trigger]" onchange="toggleTriggerCategory(<?php echo $groupKey ?>, this.value);">
-								<option value="disable"<?php echo ( isset( $syndicationGroup['category'] ) && ( 'none' == $syndicationGroup['category'] ) ) ? ' selected="selected"' : ''; ?>><?php _e( 'Disabled', 'syndicate-out' ); ?></option>
+								<option value="disable"<?php echo ( isset( $syndicationGroup['category'] ) && ( 'none' == $syndicationGroup['category'] ) ) ? ' selected="selected"' : ''; ?>><?php _e( 'Group Disabled', 'syndicate-out' ); ?></option>
 								<option value="all"<?php echo ( isset( $syndicationGroup['category'] ) && ( -1 == $syndicationGroup['category'] ) ) ? ' selected="selected"' : ''; ?>><?php _e( 'All posts', 'syndicate-out' ); ?></option>
 								<option value="post"<?php echo ( isset( $syndicationGroup['category'] ) && ( -2 == $syndicationGroup['category'] ) ) ? ' selected="selected"' : ''; ?>><?php _e( 'Selected posts', 'syndicate-out' ); ?></option>
 								<option value="category"<?php echo ( isset( $syndicationGroup['category'] ) && ( 0 < $syndicationGroup['category'] ) ) ? ' selected="selected"' : ''; ?>><?php _e( 'Selected category', 'syndicate-out' ); ?></option>
@@ -113,7 +115,7 @@
 								<option value="none"<?php echo ( isset( $syndicationGroup['syndicate_category'] ) && ( 'none' == $syndicationGroup['syndicate_category'] ) ) ? ' selected="selected"' : ''; ?>><?php _e( 'No categories', 'syndicate-out' ); ?></option>
 								<option value="all"<?php echo ( isset( $syndicationGroup['syndicate_category'] ) && ( 'all' == $syndicationGroup['syndicate_category'] ) ) ? ' selected="selected"' : ''; ?>><?php _e( 'All post categories', 'syndicate-out' ); ?></option>
 								<option value="syndication"<?php echo ( isset( $syndicationGroup['syndicate_category'] ) && ( 'allbut' == $syndicationGroup['syndicate_category'] ) ) ? ' selected="selected"' : ''; ?>><?php _e( 'All except syndication category', 'syndicate-out' ); ?></option>
-								<option value="syndication"<?php echo ( isset( $syndicationGroup['syndicate_category'] ) && ( 'syndication' == $syndicationGroup['syndicate_category'] ) ) ? ' selected="selected"' : ''; ?>><?php _e( 'Syndication category only', 'syndicate-out' ); ?></option>
+								<option value="syndication" id="transmitcategories-syndication-<?php echo $groupKey; ?>"<?php echo ( isset( $syndicationGroup['syndicate_category'] ) && ( 'syndication' == $syndicationGroup['syndicate_category'] ) ) ? ' selected="selected"' : ''; ?>><?php _e( 'Syndication category only', 'syndicate-out' ); ?></option>
 							</select>
 						</td>
 					</tr>
