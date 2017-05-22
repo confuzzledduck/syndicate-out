@@ -41,6 +41,7 @@ The post should immediately be cross-posted to the remote blog.
 = 0.10 =
 * Added remote post delete option when local post is deleted. (Currently only works on moving to trash, rather then trash empty.)
 * Fixed bug with multiple groups where the name of the last group was displayed for all groups in settings.
+* Fix to all 'All except syndication category' option. It wouldn't have been working quite a while, I guess it's not popular.
 
 = 0.9 =
 * Added syndication of featured images (díky Jan at lwd.cz for the majority of this).
