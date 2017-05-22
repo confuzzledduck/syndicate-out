@@ -47,7 +47,7 @@ if ( is_admin() ) {
 	add_action( 'admin_menu', 'syndicate_out_menu' );
 	add_action( 'admin_init', 'syndicate_out_register_settings' );
 	add_action( 'save_post', 'syndicate_out_post' );
-	add_action( 'before_delete_post', 'syndicate_out_post_delete' );
+	add_action( 'trash_post', 'syndicate_out_post_delete' );
 	add_filter( 'plugin_action_links', 'syndicate_out_settings_link', 10, 2 );
 
 	// Register the plugin activation and delete functions...
@@ -621,15 +621,26 @@ if ( is_admin() ) {
 
 	}
 	
-	 // Checks to see if a post should be deleted remotely when the local copy of
-	 // the post is deleted...
+	 // Deletes a post remotely when the the local copy of the post is deleted
+	 // if the settings for each group are to delete...
 	function syndicate_out_post_delete( $postId ) {
-	
+
 		$remotePostData = get_post_meta( $postId, '_so_remote_posts', true );
 		if ( !empty( $remotePostData ) ) {
-			$remotePostData = unserialize( $remotePostData );
+			if ( $soOptions = get_option( 'so_options' ) ) {
+				$remotePostData = unserialize( $remotePostData );
+				foreach ( $remotePostData['group'] AS $groupKey => $postIds ) {
+					if ( isset( $soOptions['group'][$groupKey]['deleted_posts'] ) && ( true == $soOptions['group'][$groupKey]['deleted_posts'] ) ) {
+						if ( syndicate_out_include_ixr() ) {
+							foreach ( $postIds AS $serverKey => $postId ) {
+								$xmlrpc = new WP_HTTP_IXR_CLIENT( $soOptions['group'][$groupKey]['servers'][$serverKey]['server'].'xmlrpc.php' );
+								$xmlrpc->query( 'wp.deletePost', 1, $soOptions['group'][$groupKey]['servers'][$serverKey]['username'], $soOptions['group'][$groupKey]['servers'][$serverKey]['password'], $postId );
+							}
+						}
+					}
+				}
+			}
 		}
-		
 		
 	}
 
@@ -676,6 +687,19 @@ if ( is_admin() ) {
 
 		return $terms;
 
+	}
+	
+	 // Include the required IXR libraries...
+	function syndicate_out_include_ixr() {
+	
+		if ( include_once(  ABSPATH . WPINC . '/class-IXR.php' ) ) {
+			if ( include_once(  ABSPATH . WPINC . '/class-wp-http-ixr-client.php' ) ) {
+				return true;
+			}
+		}
+		
+		return false;
+	
 	}
 
  /* Maintenance section. */

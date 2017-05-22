@@ -2,7 +2,7 @@
 Contributors: ConfuzzledDuck
 Tags: syndication, xmlrpc, cross-post, post, content, autoblogging, duplicate
 Requires at least: 3.4
-Tested up to: 4.7.4
+Tested up to: 4.7.5
 Stable tag: 0.10
 
 Syndicates posts made in any specified category to another WP blog using WordPress' built in XML-RPC functionality.
@@ -39,7 +39,8 @@ The post should immediately be cross-posted to the remote blog.
 == Changelog ==
 
 = 0.10 =
-* Fixed a bug with multiple groups where the name of the last group was displayed for all groups in settings.
+* Added remote post delete option when local post is deleted. (Currently only works on moving to trash, rather then trash empty.)
+* Fixed bug with multiple groups where the name of the last group was displayed for all groups in settings.
 
 = 0.9 =
 * Added syndication of featured images (díky Jan at lwd.cz for the majority of this).
